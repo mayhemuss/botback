@@ -7,6 +7,7 @@ import {gamesList} from "./games/gamesList.js";
 import {bot} from "./index.js";
 import {texts} from "./text.js";
 import {timeCheck} from "./functions/timeCheck.js";
+import {ADMIN_ID} from "./tokens/url.js";
 
 
 const router = new Router();
@@ -17,33 +18,34 @@ router.get("/type", async (req, res) => {
     console.log("fet")
     const {id} = req.query;
     await saveMessages("открыл страницу регистрации", id)
-    const reg = await getRegType(id)
-    return await res.json({types: reg.types})
+
+    return await res.json({types: "done"})
   } catch (e) {
     console.log(e)
-    return await res.json(e)
+    return res.json(e);
   }
 })
 
 router.post("/regis",
   async (req, res) => {
+    const {
+      date,
+      phone,
+      name,
+      subscribe,
+      chatId,
+      tname,
+      username,
+      regType,
+      ref,
+      callData,
+      commandName,
+      ip
+    } = req.body;
 
     try {
 
-      const {
-        date,
-        phone,
-        name,
-        subscribe,
-        chatId,
-        tname,
-        username,
-        regType,
-        ref,
-        callData,
-        commandName,
-        ip
-      } = req.body;
+
       // console.log(req.body)
       // await saveMessages(`отправил данные, телефон - ${phone}, имя - ${name}`, chatId)
       const [anonced, dateEnd] = await callData.split("_")
@@ -78,7 +80,7 @@ router.post("/regis",
         });
         console.log("renew")
         await bot.sendMessage(chatId, `Спасибо за изменение данных, ${name}`)
-
+        await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
       } else {
         const responce = await fetch(`https://2domains.ru/api/web-tools/geoip?ip=${ip}`)
         const {city, region, country} = await responce.json()
@@ -95,29 +97,34 @@ router.post("/regis",
         console.log("new")
 
         if (games[0].commandMemberCount > 1 && regType === "capitan") {
+
           await bot.sendMessage(chatId, texts.capitanRegDone(name, commandName))
           await bot.sendMessage(chatId, texts.refUrl(ref, callDataInGame, commandName, gameName))
+          await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
+          await saveMessages(`Спасибо за регистрацию, ${name}. реферальная ссылка ${texts.refUrl(ref, callDataInGame, commandName, gameName)}`, chatId, "bot")
         } else {
           await bot.sendMessage(chatId, `Спасибо за регистрацию, ${name}.`)
+          await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
         }
 
         if (games[0].commandMemberCount === count + 1 && games[0].commandMemberCount > 1) {
           for (const id of [...userIds, chatId]) {
-
             await bot.sendMessage(id, texts.registrationDone(comName, games[0].gameName))
+            await saveMessages(`Спасибо за регистрацию команды ${comName}.`, id, "bot")
           }
         } else {
           await bot.sendMessage(chatId, `Спасибо за регистрацию, ${name}.`)
+          await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
         }
       }
 
       return await res.json({done: "done"})
     } catch (e) {
       // console.log(e)
-      return res.status(400).json(e)
-
+      await bot.sendMessage(ADMIN_ID, JSON.stringify({e, chatId}))
+      res.status(400).json(e)
+      return await saveMessages(JSON.stringify({e, chatId}), chatId, "bot")
     }
-
   })
 
 

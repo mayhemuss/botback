@@ -6,7 +6,7 @@ export const saveMessages = async (message, chatId, answer) => {
   await googleSheets.spreadsheets.values.append({
     auth,
     spreadsheetId,
-    range: logsSheets,
+    range: `${logsSheets}!A:H`,
     valueInputOption: "RAW",
     resource: {
       values: [[message, String(chatId),date, answer]],

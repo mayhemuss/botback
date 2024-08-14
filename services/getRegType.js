@@ -1,5 +1,8 @@
 import {spreadsheetId} from "../tokens/token.js";
 import {auth, googleSheets} from "../functions/googleAuth.js";
+import {saveMessages} from "./saveMessages.js";
+import {bot} from "../index.js";
+import {ADMIN_ID} from "../tokens/url.js";
 
 
 export const getRegType = async (chatId, registrationSheets, capId = false) => {
@@ -51,6 +54,8 @@ export const getRegType = async (chatId, registrationSheets, capId = false) => {
     }
   } catch (e) {
     console.log(e)
+    await bot.sendMessage(ADMIN_ID, JSON.stringify({e, chatId}))
+    await saveMessages(JSON.stringify(e), chatId, "bot")
     return {types: false, index: -1, commandName: undefined, count: 0, userIds: []}
   }
 

@@ -2,15 +2,13 @@ import TelegramBot from 'node-telegram-bot-api'
 import express from "express";
 import cors from "cors";
 import * as dotenv from "dotenv";
-import {skgID, spreadsheetId, TelegramToken} from "./tokens/token.js";
+import {skgID, TelegramToken} from "./tokens/token.js";
 import router from "./router.js";
 import {BACK_URL, PORT} from "./tokens/url.js";
 import {commands, forms, gameVariantsText, texts} from "./text.js";
 import {textCheck} from "./functions/textCheck.js";
 import {swearWords} from "./scenarios/swearWords.js";
-import {getRegType} from "./services/getRegType.js";
 import {timeCheck} from "./functions/timeCheck.js";
-import {auth, googleSheets} from "./functions/googleAuth.js";
 import {saveMessages} from "./services/saveMessages.js";
 import {textCommandCheck} from "./scenarios/textCommandCheck.js";
 import {gamesList} from "./games/gamesList.js";
@@ -31,15 +29,14 @@ app.use(cors());
 
 app.use(express.json({limit: '70mb'})); // возможность вставлять джейсон на прямую
 app.use("/reg", router)
-const start = async () => {
 
+const start = async () => {
 
   try {
     app.listen(PORT, BACK_URL, () => console.log(`server start at https://${BACK_URL}:${PORT}`));
   } catch (error) {
     console.log(error);
   }
-// bot.editMessageReplyMarkup()
 
   await bot.setMyCommands(commands);
   bot.on('message', async (msg) => {
@@ -56,22 +53,17 @@ const start = async () => {
 
         //проверка подписки
 
-        // const signStatus = await bot.getChatMember(skgID, chatId)
-        // if (signStatus.status === 'left') {
-        //   await saveMessages(texts.subsribeText, chatId, "bot")
-        //   return await bot.sendMessage(chatId, texts.subsribeText, forms.subscribeForm)
-        // }
+        const signStatus = await bot.getChatMember(skgID, chatId)
+        if (signStatus.status === 'left') {
+          await bot.sendMessage(chatId, texts.subsribeText, forms.subscribeForm)
+          return await saveMessages(texts.subsribeText, chatId, "bot")
+        }
 
 
         if (text === "/start") {
 
           return await startMessage(chatId)
-          // const regText = reg.types ? "Изменить данные" : "Зарегистрироваться"
 
-          // await saveMessages(message.text, chatId, "bot")
-
-
-          // return await bot.sendMessage(chatId, null)
         }
 
 
@@ -81,14 +73,12 @@ const start = async () => {
           console.log(text)
           const ciphertext = text.split(" ")[1]
           console.log(ciphertext)
-
+          await saveMessages(ciphertext, chatId)
 
           const [capId, anonced, dateEnd] = decodeText(ciphertext).split("_")
           if (+capId === +chatId) {
-            return await bot.sendMessage(
-              chatId,
-              "Вы уже зарегистрировались как Капитан команды"
-            )
+            await bot.sendMessage(chatId, "Вы уже зарегистрировались как Капитан команды")
+            return await saveMessages("Вы уже зарегистрировались как Капитан команды", chatId, "bot")
           }
 
           const games = timeCheck(gamesList).filter(game => {
@@ -101,7 +91,8 @@ const start = async () => {
             const {registrationSheets, commandMemberCount} = games[0]
             const {commandName, count} = await getCommandName(registrationSheets, capId)
             if (count >= commandMemberCount) {
-              return await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
+              await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
+              return await saveMessages(`Команды ${commandName} уже набрана`, chatId, "bot")
             }
             const {lenght, query} = rawQueryToString(
               {
@@ -118,7 +109,7 @@ const start = async () => {
 
             return await bot.sendMessage(
               chatId,
-              `Регистрация как член комманды ${commandName} по ${
+              `Регистрация как член команды ${commandName} по ${
                 games[0].gameName
               }`,
 
@@ -130,8 +121,7 @@ const start = async () => {
                       web_app: {
                         url: `${games[0].webAppUrl}?${query}`
                       }
-                    }
-                    ],
+                    }],
                   ]
                 }
               }
@@ -142,12 +132,11 @@ const start = async () => {
           return textCommandCheck(text, chatId)
         }
 
-
       } catch
         (error) {
         console.log(error)
-        await saveMessages(texts.allBad, chatId, "bot")
         await bot.sendMessage(chatId, texts.allBad)
+        await saveMessages(texts.allBad, chatId, "bot")
       }
     }
   )
@@ -160,11 +149,11 @@ const start = async () => {
 
     //проверка подписки
 
-    // const signStatus = await bot.getChatMember(skgID, chatId)
-    // if (signStatus.status === 'left') {
-    //   await saveMessages(texts.subsribeText, chatId, "bot")
-    //   return await bot.sendMessage(chatId, texts.subsribeText, forms.subscribeForm)
-    // }
+    const signStatus = await bot.getChatMember(skgID, chatId)
+    if (signStatus.status === 'left') {
+      await bot.sendMessage(chatId, texts.subsribeText, forms.subscribeForm)
+      return await saveMessages(texts.subsribeText, chatId, "bot")
+    }
 
     await saveMessages(callBackData, chatId)
 
@@ -173,11 +162,11 @@ const start = async () => {
       if (callBackData === "Подписался!") {
         const signStatus = await bot.getChatMember(skgID, chatId)
         if (signStatus.status === 'left') {
-          await saveMessages(texts.stillNeedSubscribe, chatId, "bot")
-          return await bot.sendMessage(chatId, texts.stillNeedSubscribe, forms.subscribeForm)
+          await bot.sendMessage(chatId, texts.stillNeedSubscribe, forms.subscribeForm)
+          return await saveMessages(texts.stillNeedSubscribe, chatId, "bot")
         } else {
-          await saveMessages(texts.helloText, chatId, "bot")
-          return startMessage(chatId)
+          await startMessage(chatId)
+          return await saveMessages("главноее меню", chatId, "bot")
         }
       }
 
@@ -189,12 +178,13 @@ const start = async () => {
       if (Object.keys(gameObj).includes(callBackData)) {
         return await gameObj[callBackData].editRegistrationMenu(chatId, message_id)
       }
-
-      return await gameObj.AwaitNew.editRegistrationMenu(chatId, message_id)
+      await gameObj.AwaitNew.editRegistrationMenu(chatId, message_id)
+      return await saveMessages("Ожидаем мероприятий", chatId, "bot")
 
     } catch (error) {
       console.log(error)
       await bot.sendMessage(chatId, "Ожидаем анонса новых мероприятий...")
+      await saveMessages("Ожидаем анонса новых мероприятий...", chatId, "bot")
     }
 
 
