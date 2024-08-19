@@ -14,7 +14,7 @@ export const gamesList = [
     commandMemberCount: 5,
     webAppUrl: "https://skynetgamesbot.ru",
     anonced: "dota",
-    anoncedPost: "https://t.me/games_skynet"
+    anoncedPost: "https://t.me/games_skynet/448"
   },
 
 ]
