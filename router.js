@@ -102,7 +102,8 @@ router.post("/regis",
           await bot.sendMessage(chatId, texts.refUrl(ref, callDataInGame, commandName, gameName))
           await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
           await saveMessages(`Спасибо за регистрацию, ${name}. реферальная ссылка ${texts.refUrl(ref, callDataInGame, commandName, gameName)}`, chatId, "bot")
-        } else {
+        }
+        if (games[0].commandMemberCount > 1 && regType === "user") {
           await bot.sendMessage(chatId, `Спасибо за регистрацию, ${name}.`)
           await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
         }
@@ -112,7 +113,9 @@ router.post("/regis",
             await bot.sendMessage(id, texts.registrationDone(comName, games[0].gameName))
             await saveMessages(`Спасибо за регистрацию команды ${comName}.`, id, "bot")
           }
-        } else {
+        }
+
+        if (games[0].commandMemberCount === 1) {
           await bot.sendMessage(chatId, `Спасибо за регистрацию, ${name}.`)
           await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
         }
