@@ -12,7 +12,8 @@ import {ADMIN_ID} from "./tokens/url.js";
 
 const router = new Router();
 
-router.get("/type", async (req, res) => {
+router.post("/type",
+  async (req, res) => {
   try {
 
     console.log("fet")
