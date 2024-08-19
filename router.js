@@ -12,7 +12,7 @@ import {ADMIN_ID} from "./tokens/url.js";
 
 const router = new Router();
 
-router.post("/type",
+router.get("/type",
   async (req, res) => {
   try {
 
