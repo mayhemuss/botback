@@ -3,7 +3,7 @@ import {texts} from "../text.js";
 export const gamesList = [
   {
     gameName: "Dota 2",
-    dateStart: +(new Date(2024, 7, 19, 17 - 3, 30)),
+    dateStart: +(new Date(2024, 7, 19, 16 - 3, 30)),
     dateEnd: +(new Date(2024, 7, 30, 23 - 3, 59)),
     descriptions: "Регистрация на новый турнир по Dota 2, Выбери как зарегистрироваться, " +
       "как капитан команды или как член команды?",
