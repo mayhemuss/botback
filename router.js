@@ -14,18 +14,18 @@ const router = new Router();
 
 router.get("/type",
   async (req, res) => {
-  try {
+    try {
 
-    console.log("fet")
-    const {id} = req.query;
-    await saveMessages("открыл страницу регистрации", id)
+      console.log("fet")
+      const {id} = req.query;
+      await saveMessages("открыл страницу регистрации", id)
 
-    return await res.json({types: "done"})
-  } catch (e) {
-    console.log(e)
-    return res.json(e);
-  }
-})
+      return await res.json({types: "done"})
+    } catch (e) {
+      console.log(e)
+      return res.json(e);
+    }
+  })
 
 router.post("/regis",
   async (req, res) => {
@@ -92,7 +92,7 @@ router.post("/regis",
           range: registrationSheets,
           valueInputOption: "RAW",
           resource: {
-            values: [[date, phone, name, subscribe, tname, username, String(chatId), ref, commandName, regType, ip, city, region, country]],
+            values: [[date, phone, name, subscribe, tname, username, String(chatId), String(ref), commandName, regType, ip, city, region, country]],
           }
         })
         console.log("new")
