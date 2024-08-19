@@ -98,7 +98,7 @@ router.post("/regis",
 
         if (games[0].commandMemberCount > 1 && regType === "capitan") {
 
-          await bot.sendMessage(chatId, texts.capitanRegDone(name, commandName))
+          await bot.sendMessage(chatId, texts.capitanRegDone(name, commandName, games[0].commandMemberCount))
           await bot.sendMessage(chatId, texts.refUrl(ref, callDataInGame, commandName, gameName))
           await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
           await saveMessages(`Спасибо за регистрацию, ${name}. реферальная ссылка ${texts.refUrl(ref, callDataInGame, commandName, gameName)}`, chatId, "bot")
