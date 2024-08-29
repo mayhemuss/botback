@@ -12,12 +12,12 @@ import {ADMIN_ID} from "./tokens/url.js";
 
 const router = new Router();
 
-router.get("/type",
+router.post("/type",
   async (req, res) => {
     try {
 
       console.log("fet")
-      const {id} = req.query;
+      const {id} = req.body;
       await saveMessages("открыл страницу регистрации", id)
 
       return await res.json({types: "done"})
@@ -47,7 +47,6 @@ router.post("/regis",
     try {
 
 
-      // console.log(req.body)
       // await saveMessages(`отправил данные, телефон - ${phone}, имя - ${name}`, chatId)
       const [anonced, dateEnd] = await callData.split("_")
 
@@ -76,7 +75,7 @@ router.post("/regis",
           range: `${registrationSheets}!A${NewInd}:K${NewInd}`,
           valueInputOption: "RAW",
           resource: {
-            values: [[date, phone, name, subscribe, tname, username, String(chatId)]],
+            values: [[date, phone, name, subscribe, tname, username ? "https://t.me/" + username : "", String(chatId)]],
           }
         });
         console.log("renew")
@@ -92,7 +91,7 @@ router.post("/regis",
           range: registrationSheets,
           valueInputOption: "RAW",
           resource: {
-            values: [[date, phone, name, subscribe, tname, username, String(chatId), String(ref), commandName, regType, ip, city, region, country]],
+            values: [[date, phone, name, subscribe, tname, username ? "https://t.me/" + username : "", String(chatId), String(ref), commandName, regType, ip, city, region, country]],
           }
         })
         console.log("new")
