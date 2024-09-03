@@ -1,6 +1,6 @@
 import {inlineGameList} from "../games/inlineGameList.js";
 import {gamesList} from "../games/gamesList.js";
-import {bigTeam, capitanRegConfirm, sky_logo, smallTeam, texts, userRegConfirm} from "../text.js";
+import {bigTeam, capitanRegConfirm, lottery, sky_logo, smallTeam, texts, userRegConfirm} from "../text.js";
 import {timeCheck} from "./timeCheck.js";
 import {getRegType} from "../services/getRegType.js";
 
@@ -75,7 +75,7 @@ export const gameToObject = (list, bot) => {
 
 
   actualList.forEach(event => {
-    if (event.commandMemberCount > 1) {
+    if (event.commandMemberCount > 1 && event.type === "game") {
 
       //регистрация юзера
       obj[event.callData + "_user"] = {
@@ -229,46 +229,48 @@ export const gameToObject = (list, bot) => {
     }
 
     //reglament
-    obj[`${event.callData}_reglament`] = {
-      editRegistrationMenu: async (chatId, message_id) => {
-        console.log("reglament")
-        const form = {
-          chat_id: chatId,
-          message_id
-        }
-        const lastForm = {
-          chat_id: chatId,
-          message_id: +message_id - 1
-        }
-        try {
-          await bot.editMessageMedia({
-              type: "photo",
-              media: event.imageUrl
-            },
-            lastForm
-          )
-        } catch (e) {
-        }
+    if (event.type === "game") {
+      obj[`${event.callData}_reglament`] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+          console.log("reglament")
+          const form = {
+            chat_id: chatId,
+            message_id
+          }
+          const lastForm = {
+            chat_id: chatId,
+            message_id: +message_id - 1
+          }
+          try {
+            await bot.editMessageMedia({
+                type: "photo",
+                media: event.imageUrl
+              },
+              lastForm
+            )
+          } catch (e) {
+          }
 
-        console.log("photo")
-        await bot.editMessageText(event.reglaments,
-          form
-        )
-        console.log("text")
-        await bot.editMessageReplyMarkup({
-            inline_keyboard: [
-              [{
-                text: "<<- Назад",
-                callback_data: event.callData
-              }]
-            ]
-          }, form
-        )
-        console.log("form")
+          console.log("photo")
+          await bot.editMessageText(event.reglaments,
+            form
+          )
+          console.log("text")
+          await bot.editMessageReplyMarkup({
+              inline_keyboard: [
+                [{
+                  text: "<<- Назад",
+                  callback_data: event.callData
+                }]
+              ]
+            }, form
+          )
+          console.log("form")
+        }
       }
     }
 
-    if (event.commandMemberCount === 1) {
+    if (event.commandMemberCount === 1 && event.type === "game") {
 
       //регистрация одиночных
       obj[event.callData] = {
@@ -319,6 +321,90 @@ export const gameToObject = (list, bot) => {
         }
       }
     }
+    //лотерея
+    if (event.type === "lottery") {
+
+      //начальное меню лотереи
+      obj[event.callData] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+          const form = {
+            chat_id: chatId,
+            message_id
+          }
+          const lastForm = {
+            chat_id: chatId,
+            message_id: +message_id - 1
+          }
+          try {
+            await bot.editMessageMedia({
+                type: "photo",
+                media: event.imageUrl
+              },
+              lastForm
+            )
+          } catch (e) {
+          }
+
+          await bot.editMessageText(event.descriptions,
+            form
+          )
+          return await bot.editMessageReplyMarkup({
+              inline_keyboard: lottery(
+                event.gameName,
+                "AllGameList",
+                event.callData,
+                event.webAppUrl,
+                {
+                  callData: event.callData,
+                }
+              )
+
+            }, form
+          )
+        }
+      }
+      //регламент лотереи
+      obj[`${event.callData}_reglament`] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+          const form = {
+            chat_id: chatId,
+            message_id
+          }
+          const lastForm = {
+            chat_id: chatId,
+            message_id: +message_id - 1
+          }
+          try {
+            await bot.editMessageMedia({
+                type: "photo",
+                media: event.imageUrl
+              },
+              lastForm
+            )
+          } catch (e) {
+          }
+
+          console.log("photo")
+          await bot.editMessageText(event.reglaments,
+            form
+          )
+          console.log("text")
+          await bot.editMessageReplyMarkup({
+              inline_keyboard: [
+                [{
+                  text: "<<- Назад",
+                  callback_data: event.callData
+                }]
+              ]
+            }, form
+          )
+        }
+      }
+
+
+    }
+
+
   })
 
 

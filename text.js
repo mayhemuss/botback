@@ -15,6 +15,13 @@ export const texts = {
   subsribeText: 'Для продолжения работы необходимо подписаться на канал\n' +
     '\n' +
     'https://t.me/games_skynet',
+  regionNotAlloved: "Для участия в конкурсе необходимо быть в городе Санкт-Петербург. " +
+    "Если вы из Санкт-Петербурга, попробуйте выключить VPN или " +
+    "подключится к Wi-Fi и пройдите регистрацию повторно",
+  lotteryTeamFull: "Человек отправивший вам ссылку уже набрал нужное количество подписчиков, " +
+    "поэтому вы не можете быть его рефералом, вы можете пройти регистрацию по реферальной " +
+    "ссылке другого человека и стать его рефералом либо получить свою реферальную " +
+    "ссылку и получить возможность выиграть Iphone",
   stillNeedSubscribe: 'Все-таки необходимо подписаться на канал\n' +
     '\n' +
     'https://t.me/games_skynet',
@@ -35,6 +42,23 @@ export const texts = {
   capitanRegConf: "Подтвердите свою регистрацию как капитан. " +
     "После регистрации как капитан будет невозможно зарегистрироваться как участник другой команды! " +
     "Внимательно пишите название команды, после регистрации его смена не возможна",
+  loteryRegDone: (name) => {
+    return `Спасибо за регистрацию, ${
+        name
+      }. Сейчас вам придет сообщение с реферальной ссылкой для ваших друзей. ` +
+      `Отправьте ее трем своим друзьям. После того как они зарегистрируются ` +
+      `у вас появится возможность выиграть Iphone`
+  },
+  loteryRefUrl: (ref, callData) => {
+    const RawReg = `${ref}_${callData}`
+    return `Реферальная ссылка для участия в розыгрыше Iphone ${BOT_NAME}?start=${
+      codeText(RawReg)
+    }, перейдите по ней, пройдите регистрацию и получите возможность выиграть Iphone`
+  },
+
+  loteryAccept: "Трое человек зарегистрировались по вашей ссылке. " +
+    "Поздравляем вас с успешным выполнением всех условий для участия в розыгрыше Iphone. " +
+    "Ждите результатов розыгрыша в телеграм канале",
 
   capitanRegDone: (name, commandName, memberCount) => {
     return `Спасибо за регистрацию, ${name}. Сейчас Вам, как капитану команды ${commandName
@@ -43,9 +67,12 @@ export const texts = {
   },
   refUrl: (ref, callData, commandName, gameName) => {
     const RawReg = `${ref}_${callData}`
-    return `Участники команды ${commandName} по ${gameName}, вот ваша ссылка для регистрации в команду: ${BOT_NAME}?start=${
+    return `Участники команды ${commandName} по ${
+      gameName
+    }, для регистрации вам необходимо сначала подписаться на канал https://t.me/games_skynet , после чего перейти по реферальной ссылке: ${
+      BOT_NAME}?start=${
       codeText(RawReg)
-    }, перейдите по ней и введите свои данные.`
+    } и ввести свои данные`
   },
   registrationDone: (commandName, gameName) => {
     return `Участники команды ${commandName}, поздравляем вас с успешной регистрацией команды на турнире по ${
@@ -144,6 +171,27 @@ export const bigTeam = (gameName, prevMenu, callData) => {
     }]
   ]
 }
+
+export const lottery = (gameName, prevMenu, callData, webAppUrl, rawQuery) => {
+  const {query, lenght} = rawQueryToString(rawQuery)
+  return [
+    [{
+      text: `Регламент ${gameName}`,
+      callback_data: `${callData}_reglament`
+    }],
+    [{
+      text: `Получить реферальную ссылку`,
+      web_app: {
+        url: `${webAppUrl}${lenght}${query}`,
+      }
+    }],
+    [{
+      text: "<<- Назад",
+      callback_data: prevMenu
+    }]
+  ]
+}
+
 
 export const capitanRegConfirm = (rawQuery, gameName, callData, regText, webAppUrl, prevMenu) => {
   const {lenght, query} = rawQueryToString(rawQuery)

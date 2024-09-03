@@ -17,8 +17,8 @@ export const getCommandName = async (registrationSheets, capId) => {
   console.log(command)
 
   const userIds = command.map(elem => {
-    return elem.userid
+    return elem?.userid
   })
 
-  return {commandName: command[0].commandName, count: command.length, userIds}
+  return {commandName: command[0]?.commandName, count: command.length, userIds}
 }

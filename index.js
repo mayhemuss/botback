@@ -2,10 +2,10 @@ import TelegramBot from 'node-telegram-bot-api'
 import express from "express";
 import cors from "cors";
 import * as dotenv from "dotenv";
-import {skgID, TelegramToken} from "./tokens/token.js";
+import {TelegramToken} from "./tokens/token.js";
 import router from "./router.js";
 import {BACK_URL, PORT} from "./tokens/url.js";
-import {commands, forms, gameVariantsText, texts} from "./text.js";
+import {commands, gameVariantsText, texts} from "./text.js";
 import {textCheck} from "./functions/textCheck.js";
 import {swearWords} from "./scenarios/swearWords.js";
 import {timeCheck} from "./functions/timeCheck.js";
@@ -17,6 +17,7 @@ import {startMessage} from "./functions/startMessage.js";
 import {rawQueryToString} from "./functions/rawQueryToString.js";
 import {gameToObject} from "./functions/gameToObject.js";
 import {decodeText} from "./functions/codeDecode.js";
+import {userids} from "./userids.js";
 
 
 dotenv.config();
@@ -28,6 +29,7 @@ app.use(cors());
 
 
 app.use(express.json({limit: '70mb'})); // возможность вставлять джейсон на прямую
+// app.use("/api/reg", router)
 app.use("/reg", router)
 
 const start = async () => {
@@ -68,69 +70,135 @@ const start = async () => {
 
 
         if (text.startsWith("/start ")) {
-
+//
 
           console.log(text)
-          const ciphertext = text.split(" ")[1]
-          console.log(ciphertext)
-          await saveMessages(ciphertext, chatId)
+          const codedText = text.split(" ")[1]
+          console.log(codedText)
+          await saveMessages(codedText, chatId)
 
-          const [capId, anonced, dateEnd] = decodeText(ciphertext).split("_")
-          if (+capId === +chatId) {
-            await bot.sendMessage(chatId, "Вы уже зарегистрировались как Капитан команды")
-            return await saveMessages("Вы уже зарегистрировались как Капитан команды", chatId, "bot")
-          }
+          const [capId, anonced, dateEnd] = decodeText(codedText).split("_")
+          await saveMessages(decodeText(codedText), chatId)
 
           const games = timeCheck(gamesList).filter(game => {
             return game.callData === `${anonced}_${dateEnd}`
           })
 
-          console.log(games)
 
           if (games.length > 0) {
-            const {registrationSheets, commandMemberCount} = games[0]
-            const {commandName, count} = await getCommandName(registrationSheets, capId)
-            if (count >= commandMemberCount) {
-              await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
-              return await saveMessages(`Команды ${commandName} уже набрана`, chatId, "bot")
+
+            const {registrationSheets, commandMemberCount, type, webAppUrl} = games[0]
+            if (+capId === +chatId && type === "game") {
+              await bot.sendMessage(chatId, "Вы уже зарегистрировались как Капитан команды")
+              return await saveMessages("Вы уже зарегистрировались как Капитан команды", chatId, "bot")
             }
-            const {lenght, query} = rawQueryToString(
-              {
-                commandName,
-                callData: `${anonced}_${dateEnd}`,
-                ref: capId,
-                commandMemberCount: games[0].commandMemberCount,
-                regText: "Зарегистрироваться",
-                regType: "user"
+            if (+capId === +chatId && type === "lottery") {
+              await bot.sendMessage(chatId, "Вы не может быть своим рефералом 🤣")
+              return await saveMessages("Вы не может быть своим рефералом", chatId, "bot")
+            }
+
+            if (type === "game") {
+
+              const {commandName, count} = await getCommandName(registrationSheets, capId)
+              if (count >= commandMemberCount) {
+                await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
+                return await saveMessages(`Команды ${commandName} уже набрана`, chatId, "bot")
               }
-            )
+              const {lenght, query} = rawQueryToString(
+                {
+                  commandName,
+                  callData: `${anonced}_${dateEnd}`,
+                  ref: capId,
+                  commandMemberCount: games[0].commandMemberCount,
+                  regText: "Зарегистрироваться",
 
-            await bot.sendPhoto(chatId, games[0].imageUrl)
-
-            return await bot.sendMessage(
-              chatId,
-              `Регистрация как член команды ${commandName} по ${
-                games[0].gameName
-              }`,
-
-              {
-                reply_markup: {
-                  inline_keyboard: [
-                    [{
-                      text: "Регистрация как член команды",
-                      web_app: {
-                        url: `${games[0].webAppUrl}?${query}`
-                      }
-                    }],
-                  ]
                 }
-              }
-            )
-          }
+              )
 
-          //проверка запросов по играм
-          return textCommandCheck(text, chatId)
+              await bot.sendPhoto(chatId, games[0].imageUrl)
+
+              return await bot.sendMessage(
+                chatId,
+                `Регистрация как член команды ${commandName} по ${
+                  games[0].gameName
+                }`,
+
+                {
+                  reply_markup: {
+                    inline_keyboard: [
+                      [{
+                        text: "Регистрация как член команды",
+                        web_app: {
+                          url: `${webAppUrl}?${query}`
+                        }
+                      }],
+                    ]
+                  }
+                }
+              )
+
+            }
+
+            if (type === "lottery") {
+              const {count} = await getCommandName(registrationSheets, capId)
+              if (count >= commandMemberCount) {
+                await bot.sendMessage(chatId, texts.lotteryTeamFull)
+                return await saveMessages(`рефералы ${capId} уже найдены`, chatId, "bot")
+              } else {
+
+
+                if (userids.includes(chatId)) {
+
+                  await bot.sendMessage(chatId, "Вы не можете стать рефералом, так " +
+                    "как были подписаны до этого " +
+                    "на https://t.me/games_skynet , но вы можете получить свою " +
+                    "реферальную ссылку и получить шанс выиграть Iphone")
+                  return await saveMessages("Стать рефералом может " +
+                    "быть только человек который до этого не был подписан " +
+                    "на https://t.me/games_skynet", chatId, "bot")
+
+                } else {
+                  const {lenght, query} = rawQueryToString(
+                    {
+
+                      callData: `${anonced}_${dateEnd}`,
+                      ref: capId,
+                      commandMemberCount: games[0].commandMemberCount,
+                      regText: "Зарегистрироваться",
+
+                    }
+                  )
+
+                  await bot.sendPhoto(chatId, games[0].imageUrl)
+
+                  return await bot.sendMessage(
+                    chatId,
+                    `Регистрация рефералом, в розыгрыше Iphone`,
+
+                    {
+                      reply_markup: {
+                        inline_keyboard: [
+                          [{
+                            text: "Регистрация как реферал",
+                            web_app: {
+                              url: `${webAppUrl}?${query}`
+                            }
+                          }],
+                        ]
+                      }
+                    }
+                  )
+                }
+
+
+              }
+            }
+
+          }
         }
+        //проверка запросов по играм
+        return textCommandCheck(text, chatId)
+
 
       } catch
         (error) {
@@ -191,6 +259,8 @@ const start = async () => {
   })
 }
 bot.on("web_app_data", async (msg) => {
+
+
 })
 
 start()

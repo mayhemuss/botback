@@ -5,16 +5,17 @@ import {bot} from "../index.js";
 import {ADMIN_ID} from "../tokens/url.js";
 
 
-export const getRegType = async (chatId, registrationSheets, capId = false) => {
+export const getRegType = async (chatId, registrationSheets, capId = false, commandType) => {
   try {
     console.log("fet")
+    console.log("capId")
     const getRows = await googleSheets.spreadsheets.values.get({
       auth,
       spreadsheetId,
       range: `${registrationSheets}!G1:I10000`,
     })
 
-    console.log("строки", JSON.stringify(getRows))
+
 
     if (getRows.data.values === undefined) {
       await googleSheets.spreadsheets.values.append({
@@ -23,7 +24,10 @@ export const getRegType = async (chatId, registrationSheets, capId = false) => {
         range: `${registrationSheets}!A:N`,
         valueInputOption: "RAW",
         resource: {
-          values: [["дата", "телефон", "имя", "подписка", "имя в телеге", "ник в телеге", "ид", "ref", "имя команды", "тип регистрации", "ip", "город", "регион", "страна"]],
+          values: [[
+            "дата", "телефон", "имя", "подписка", "имя в телеге", "ник в телеге",
+            "ид", commandType, "ref", "тип регистрации", "ip", "город", "регион", "страна"
+          ]],
         }
       })
 
@@ -32,7 +36,7 @@ export const getRegType = async (chatId, registrationSheets, capId = false) => {
     } else {
 
       const allRow = getRows.data.values.map(elem => {
-        const [userid, commandId, commandName] = elem
+        const [userid, commandName, commandId] = elem
         return {userid, commandName, commandId}
       })
 
