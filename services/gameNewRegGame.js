@@ -3,6 +3,7 @@ import {spreadsheetId} from "../tokens/token.js";
 import {bot} from "../index.js";
 import {texts} from "../text.js";
 import {saveMessages} from "./saveMessages.js";
+import {ADMIN_ID} from "../tokens/url.js";
 
 
 export const gameNewRegGame = async (
@@ -29,7 +30,11 @@ export const gameNewRegGame = async (
   const {city, region, country} = await responce.json()
   const Tusername = username ? "https://t.me/" + username : ""
 
-
+  if (ref === "undefined") {
+    await saveMessages("битая реф ссылка", chatId, "bot")
+    await bot.sendMessage(chatId, "Произошла техническая ошибка, сейчас я свяжусь с вашим капитаном и мы ее исправим")
+    return await bot.sendMessage(ADMIN_ID, "битая ссылка у " + chatId)
+  }
   await googleSheets.spreadsheets.values.append({
     auth,
     spreadsheetId,
