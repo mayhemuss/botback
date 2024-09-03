@@ -67,6 +67,7 @@ export const texts = {
   },
   refUrl: (ref, callData, commandName, gameName) => {
     const RawReg = `${ref}_${callData}`
+    console.log(RawReg)
     return `Участники команды ${commandName} по ${
       gameName
     }, для регистрации вам необходимо сначала подписаться на канал https://t.me/games_skynet , после чего перейти по реферальной ссылке: ${
