@@ -37,7 +37,7 @@ export const gameNewRegGame = async (
     resource: {
       values: [[
         date, phone, name, subscribe, tname, Tusername,
-        String(chatId), commandName,ref?  String(ref) : String(cchatId), regType, ip, city, region, country
+        String(chatId), commandName,ref?  String(ref) : String(chatId), regType, ip, city, region, country
       ]],
     }
   })
