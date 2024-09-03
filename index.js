@@ -104,6 +104,7 @@ const start = async () => {
                 await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
                 return await saveMessages(`Команды ${commandName} уже набрана`, chatId, "bot")
               }
+              await saveMessages(commandName +" _ "+ count, chatId, "bot")
               const {lenght, query} = rawQueryToString(
                 {
                   commandName,

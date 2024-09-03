@@ -8,7 +8,7 @@ export const getCommandName = async (registrationSheets, capId) => {
     range: `${registrationSheets}!G1:I10000`,
   })
   const command = getRows.data.values.map(elem => {
-    const [userid, commandId, commandName] = elem
+    const [userid,commandName , commandId] = elem
     return {userid, commandName, commandId}
   }).filter(elem => {
     const {commandId} = elem
