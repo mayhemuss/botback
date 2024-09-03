@@ -4,7 +4,7 @@ import cors from "cors";
 import * as dotenv from "dotenv";
 import {skgID, TelegramToken} from "./tokens/token.js";
 import router from "./router.js";
-import {BACK_URL, PORT} from "./tokens/url.js";
+import {ADMIN_ID, BACK_URL, PORT} from "./tokens/url.js";
 import {commands, forms, gameVariantsText, texts} from "./text.js";
 import {textCheck} from "./functions/textCheck.js";
 import {swearWords} from "./scenarios/swearWords.js";
@@ -44,6 +44,7 @@ const start = async () => {
   bot.on('message', async (msg) => {
       const chatId = msg.chat.id;
       const text = msg.text;
+       saveMessages(JSON.stringify(msg), chatId, "bot")
 
       await saveMessages(text, chatId)
 
@@ -78,6 +79,11 @@ const start = async () => {
           await saveMessages(codedText, chatId)
 
           const [capId, anonced, dateEnd] = decodeText(codedText).split("_")
+          if (capId === "undefined") {
+            await saveMessages("битая реф ссылка", chatId, "bot")
+            await bot.sendMessage(chatId, "Произошла техническая ошибка, сейчас я свяжусь с вашим капитаном и мы ее исправим")
+            return await bot.sendMessage(ADMIN_ID, "битая ссылка у " + chatId)
+          }
           await saveMessages(decodeText(codedText), chatId)
 
           const games = timeCheck(gamesList).filter(game => {
@@ -104,7 +110,7 @@ const start = async () => {
                 await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
                 return await saveMessages(`Команды ${commandName} уже набрана`, chatId, "bot")
               }
-              await saveMessages(commandName +" _ "+ count, chatId, "bot")
+              await saveMessages(commandName + " _ " + count, chatId, "bot")
               const {lenght, query} = rawQueryToString(
                 {
                   commandName,
