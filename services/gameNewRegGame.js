@@ -47,9 +47,9 @@ export const gameNewRegGame = async (
   if (games[0].commandMemberCount > 1 && regType === "capitan") {
 
     await bot.sendMessage(chatId, texts.capitanRegDone(name, commandName, games[0].commandMemberCount))
-    await bot.sendMessage(chatId, texts.refUrl(ref, callDataInGame, commandName, gameName))
+    await bot.sendMessage(chatId, texts.refUrl(chatId, callDataInGame, commandName, gameName))
     await saveMessages(`имя= ${name} телефон = ${phone} ip= ${ip}`, chatId, "bot")
-    await saveMessages(`Спасибо за регистрацию, ${name}. реферальная ссылка ${texts.refUrl(ref, callDataInGame, commandName, gameName)}`, chatId, "bot")
+    await saveMessages(`Спасибо за регистрацию, ${name}. реферальная ссылка ${texts.refUrl(chatId, callDataInGame, commandName, gameName)}`, chatId, "bot")
   }
   if (games[0].commandMemberCount > 1 && regType === "user") {
     await bot.sendMessage(chatId, `Спасибо за регистрацию, ${name}.`)
