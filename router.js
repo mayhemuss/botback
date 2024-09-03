@@ -50,6 +50,7 @@ router.post("/regis",
     } = req.body;
 
     try {
+      await saveMessages(JSON.stringify(req.body),chatId,"bot")
       // await saveMessages(`отправил данные, телефон - ${phone}, имя - ${name}`, chatId)
       const [anonced, dateEnd] = await callData.split("_")
 

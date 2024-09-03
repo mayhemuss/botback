@@ -29,6 +29,7 @@ export const gameNewRegGame = async (
   const {city, region, country} = await responce.json()
   const Tusername = username ? "https://t.me/" + username : ""
 
+
   await googleSheets.spreadsheets.values.append({
     auth,
     spreadsheetId,
