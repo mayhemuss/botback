@@ -15,7 +15,7 @@ export const gamesList = [
     // webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
     webAppUrl: "https://skynetgamesbot.ru/game",
     anonced: "valorant",
-    anoncedPost: "https://t.me/games_skynet/457",
+    anoncedPost: "https://t.me/games_skynet/459",
     type: "game"
   },
   // {
