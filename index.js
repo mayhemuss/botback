@@ -2,7 +2,7 @@ import TelegramBot from 'node-telegram-bot-api'
 import express from "express";
 import cors from "cors";
 import * as dotenv from "dotenv";
-import {TelegramToken} from "./tokens/token.js";
+import {skgID, TelegramToken} from "./tokens/token.js";
 import router from "./router.js";
 import {BACK_URL, PORT} from "./tokens/url.js";
 import {commands, gameVariantsText, texts} from "./text.js";
