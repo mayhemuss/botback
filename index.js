@@ -5,7 +5,7 @@ import * as dotenv from "dotenv";
 import {skgID, TelegramToken} from "./tokens/token.js";
 import router from "./router.js";
 import {BACK_URL, PORT} from "./tokens/url.js";
-import {commands, gameVariantsText, texts} from "./text.js";
+import {commands, forms, gameVariantsText, texts} from "./text.js";
 import {textCheck} from "./functions/textCheck.js";
 import {swearWords} from "./scenarios/swearWords.js";
 import {timeCheck} from "./functions/timeCheck.js";

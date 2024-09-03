@@ -32,7 +32,7 @@ export const gameNewRegGame = async (
   await googleSheets.spreadsheets.values.append({
     auth,
     spreadsheetId,
-    range: registrationSheets,
+    range: registrationSheets+"!A:N",
     valueInputOption: "RAW",
     resource: {
       values: [[
