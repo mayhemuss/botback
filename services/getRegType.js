@@ -7,8 +7,8 @@ import {ADMIN_ID} from "../tokens/url.js";
 
 export const getRegType = async (chatId, registrationSheets, capId = false, commandType) => {
   try {
-    console.log("fet")
-    console.log("capId")
+    console.log("getRegType")
+
     const getRows = await googleSheets.spreadsheets.values.get({
       auth,
       spreadsheetId,

@@ -2,6 +2,7 @@ import {spreadsheetId} from "../tokens/token.js";
 import {auth, googleSheets} from "../functions/googleAuth.js";
 
 export const getCommandName = async (registrationSheets, capId) => {
+  console.log("getCommandName")
   const getRows = await googleSheets.spreadsheets.values.get({
     auth,
     spreadsheetId,
