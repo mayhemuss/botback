@@ -46,6 +46,22 @@ const start = async () => {
       const text = msg.text;
        saveMessages(JSON.stringify(msg), chatId, "bot")
 
+
+
+    if(text === "/reg_done" && chatId === ADMIN_ID){
+      const commandid =[
+        5224532239,
+        175992010,
+        5016966330,
+        706382093,
+        869264958,
+      ]
+      for (const id of commandid) {
+        await bot.sendMessage(id, texts.registrationDone("KronBars (imm3)", "Valorant"))
+        await saveMessages(`Спасибо за регистрацию команды KronBars (imm3).`, id, "bot")
+      }
+    }
+
       await saveMessages(text, chatId)
 
       try {
