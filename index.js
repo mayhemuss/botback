@@ -28,7 +28,7 @@ const app = express();
 app.use(cors());
 
 
-app.use(express.json({limit: '70mb'})); // возможность вставлять джейсон на прямую
+app.use(express.json({limit: '70mb'}));
 // app.use("/api/reg", router)
 app.use("/reg", router)
 
@@ -44,23 +44,8 @@ const start = async () => {
   bot.on('message', async (msg) => {
       const chatId = msg.chat.id;
       const text = msg.text;
-       saveMessages(JSON.stringify(msg), chatId, "bot")
 
 
-
-    if(text === "/reg_done" && chatId === ADMIN_ID){
-      const commandid =[
-        5224532239,
-        175992010,
-        5016966330,
-        706382093,
-        869264958,
-      ]
-      for (const id of commandid) {
-        await bot.sendMessage(id, texts.registrationDone("KronBars (imm3)", "Valorant"))
-        await saveMessages(`Спасибо за регистрацию команды KronBars (imm3).`, id, "bot")
-      }
-    }
 
       await saveMessages(text, chatId)
 
@@ -120,7 +105,7 @@ const start = async () => {
             }
 
             if (type === "game") {
-
+                //обработка реферальной ссылки по игре
               const {commandName, count} = await getCommandName(registrationSheets, capId)
               if (count >= commandMemberCount) {
                 await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
@@ -142,81 +127,51 @@ const start = async () => {
 
               return await bot.sendMessage(
                 chatId,
-                `Регистрация как член команды ${commandName} по ${
-                  games[0].gameName
-                }`,
-
-                {
-                  reply_markup: {
-                    inline_keyboard: [
-                      [{
-                        text: "Регистрация как член команды",
-                        web_app: {
-                          url: `${webAppUrl}?${query}`
-                        }
-                      }],
-                    ]
-                  }
-                }
+                texts.gameReferalText(commandName, games[0].gameName),
+                forms.gameReferalForm(webAppUrl, query)
               )
 
             }
 
             if (type === "lottery") {
+
+              //обработка реферальной ссылки с розыгрышем
               const {count} = await getCommandName(registrationSheets, capId)
+
+              //уже все рефералы набраны
               if (count >= commandMemberCount) {
                 await bot.sendMessage(chatId, texts.lotteryTeamFull)
                 return await saveMessages(`рефералы ${capId} уже найдены`, chatId, "bot")
+
+                //рефералы еще не набраны
               } else {
 
-
+                //человек уже был подписан
                 if (userids.includes(chatId)) {
 
-                  await bot.sendMessage(chatId, "Вы не можете стать рефералом, так " +
-                    "как были подписаны до этого " +
-                    "на https://t.me/games_skynet , но вы можете получить свою " +
-                    "реферальную ссылку и получить шанс выиграть Iphone")
-                  return await saveMessages("Стать рефералом может " +
-                    "быть только человек который до этого не был подписан " +
-                    "на https://t.me/games_skynet", chatId, "bot")
+                  await bot.sendMessage(chatId, texts.loteryMemberInList)
+                  return await saveMessages(texts.loteryMemberInList, chatId, "bot")
 
+                  //человек не был подписан
                 } else {
+
                   const {lenght, query} = rawQueryToString(
                     {
-
                       callData: `${anonced}_${dateEnd}`,
                       ref: capId,
                       commandMemberCount: games[0].commandMemberCount,
                       regText: "Зарегистрироваться",
-
                     }
                   )
 
                   await bot.sendPhoto(chatId, games[0].imageUrl)
-
                   return await bot.sendMessage(
                     chatId,
-                    `Регистрация рефералом, в розыгрыше Iphone`,
-
-                    {
-                      reply_markup: {
-                        inline_keyboard: [
-                          [{
-                            text: "Регистрация как реферал",
-                            web_app: {
-                              url: `${webAppUrl}?${query}`
-                            }
-                          }],
-                        ]
-                      }
-                    }
-                  )
+                    texts.referalText,
+                    forms.lotteryReferalForm(webAppUrl, query))
                 }
-
-
               }
             }
-
           }
         }
         //проверка запросов по играм

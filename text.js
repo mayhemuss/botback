@@ -42,6 +42,16 @@ export const texts = {
   capitanRegConf: "Подтвердите свою регистрацию как капитан. " +
     "После регистрации как капитан будет невозможно зарегистрироваться как участник другой команды! " +
     "Внимательно пишите название команды, после регистрации его смена не возможна",
+  loteryMemberInList: "Вы не можете стать рефералом, так как были подписаны до " +
+    "этого на https://t.me/games_skynet , но вы можете получить свою реферальную " +
+    "ссылку и получить шанс выиграть Iphone",
+
+  referalText: "Регистрация рефералом, в розыгрыше Iphone",
+
+  gameReferalText: (commandName, gameName) => {
+    return `Регистрация как член команды ${commandName} по ${gameName}`
+  },
+
   loteryRegDone: (name) => {
     return `Спасибо за регистрацию, ${
         name
@@ -91,6 +101,37 @@ export const forms = {
       ]
     }
   },
+
+  lotteryReferalForm: (webAppUrl, query) => {
+    return {
+      reply_markup: {
+        inline_keyboard: [
+          [{
+            text: "Регистрация как реферал",
+            web_app: {
+              url: `${webAppUrl}?${query}`
+            }
+          }]]
+      }
+    }
+  },
+
+  gameReferalForm: (webAppUrl, query) => {
+
+    return {
+      reply_markup: {
+        inline_keyboard: [
+          [{
+            text: "Регистрация как член команды",
+            web_app: {
+              url: `${webAppUrl}?${query}`
+            }
+          }],
+        ]
+      }
+
+    }
+  }
 
 }
 
