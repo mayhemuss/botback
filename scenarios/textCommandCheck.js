@@ -10,16 +10,19 @@ import {bot} from "../index.js";
 export const textCommandCheck = async (text, chatId, messageToSave) => {
 
   const anoncedGames = timeCheck(gamesList)
-
-
-  if (anoncedGames.length > 0) {
-    for (let game of anoncedGames) {
-      if (text && textCheck(text, gameVariantsText[game.anonced])) {
-        await bot.sendMessage(chatId, "Мероприятие уже анонсировано, пройдите регистрацию")
-        return await startMessage(chatId)
+  try {
+    if (anoncedGames.length > 0) {
+      for (let game of anoncedGames) {
+        if (text && textCheck(text, gameVariantsText[game.anonced])) {
+          await bot.sendMessage(chatId, "Мероприятие уже анонсировано, пройдите регистрацию")
+          return await startMessage(chatId)
+        }
       }
     }
+  } catch (e) {
   }
+  console.log(anoncedGames)
+
 
   if (text && textCheck(text, gameVariantsText.valorant)) {
     return gamesValorant(chatId)
