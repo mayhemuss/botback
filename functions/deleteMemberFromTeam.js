@@ -45,7 +45,7 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
 
 
         //если удаляет себя
-        if (params.id === chatId) {
+        if (+params.id === +chatId) {
           await deleteDatainExel(registrationSheets, index)
           await gameObj[callData].editRegistrationMenu(chatId, message_id)
           return bot.sendMessage(chatId, "Команда успешно расформирована")
@@ -70,15 +70,14 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
 
       //согласование удаления
     } else {
-
+      //получение списка команды
+      const currentComand = allRow.filter(row => {
+        return +row.ref === +chatId
+      })
 
       // если пытается удалить капитана и команду
       if (+params.id === +chatId) {
 
-        //получение списка команды
-        const currentComand = allRow.filter(row => {
-          return +row.ref === +chatId
-        })
 
         //если в команде не только капитан
         if (currentComand.length !== 1) {

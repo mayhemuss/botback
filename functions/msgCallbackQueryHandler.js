@@ -47,7 +47,7 @@ export const msgCallbackQueryHandler = async (msg) => {
     const gameObj = gameToObject(gamesList)
 
     if (callBackData.startsWith("delete")) {
-     await deleteMemberFromTeam(callBackData, gameObj, chatId,message_id, messageToSave)
+     return  await deleteMemberFromTeam(callBackData, gameObj, chatId,message_id, messageToSave)
     }
     //регистрация открыта
     if (Object.keys(gameObj).includes(callBackData)) {
