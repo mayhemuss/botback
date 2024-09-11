@@ -13,6 +13,7 @@ import {rawQueryToString} from "./rawQueryToString.js";
 import {userids} from "../userids.js";
 import {textCommandCheck} from "../scenarios/textCommandCheck.js";
 import {bot} from "../index.js";
+import {getDataFromExel} from "../services/exelData.js";
 
 export const msgTextHandler = async (msg) => {
   const chatId = msg.chat.id;
@@ -22,9 +23,28 @@ export const msgTextHandler = async (msg) => {
   const messageToSave = {chatId, text, user}
 
   try {
+
+    if (text === "msgforcap" && chatId === ADMIN_ID) {
+      const allRow = await getDataFromExel("Valorantreg15_09_24")
+      const capitans = allRow.filter(row => {
+        return row.registrationType === "capitan"
+      }).map(capitan => {
+        return capitan.chatId
+      })
+
+      for (const capitan of capitans) {
+        await bot.sendMessage(capitan, "Добавили возможность при необходимости производить замену участников команды, " +
+          "а так же просматривать список зарегистрировавшихся участников команды. Для получения данного функционала необходимо " +
+          "заново запустить бота и перейти в нужную дисциплину. \n\n" +
+          "Играй и побеждай вместе со SkyNet GAMES.")
+
+      }
+      return bot.sendMessage(ADMIN_ID,"done")
+    }
+
     //проверка ругательств
     if (text && textCheck(text, gameVariantsText.swear_words)) {
-    await swearWords(chatId)
+      await swearWords(chatId)
       return await saveMessages(JSON
         .stringify({...messageToSave, answer: "Ругательство"}), chatId)
     }
@@ -102,7 +122,7 @@ export const msgTextHandler = async (msg) => {
           messageToSave.commandName = commandName
           messageToSave.count = count
 
-          if (count === 0){
+          if (count === 0) {
             await bot.sendMessage(chatId, `Капитан расформировал команду`)
             return await saveMessages(JSON.stringify(
               {
@@ -207,7 +227,7 @@ export const msgTextHandler = async (msg) => {
     console.log(error)
     await bot.sendMessage(chatId, texts.allBad)
     await bot.sendMessage(ADMIN_ID,
-      JSON.stringify({error})+` что то пошло не так у ${chatId}`)
+      JSON.stringify({error}) + ` что то пошло не так у ${chatId}`)
     await saveMessages(texts.allBad, chatId, "bot")
   }
 }
