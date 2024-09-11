@@ -7,13 +7,16 @@ import {startMessage} from "../functions/startMessage.js";
 import {bot} from "../index.js";
 
 
-export const textCommandCheck = (text, chatId) => {
+export const textCommandCheck = async (text, chatId, messageToSave) => {
+
   const anoncedGames = timeCheck(gamesList)
+
+
   if (anoncedGames.length > 0) {
     for (let game of anoncedGames) {
       if (text && textCheck(text, gameVariantsText[game.anonced])) {
-        bot.sendMessage(chatId, "Мероприятие уже анонсировано, пройдите регистрацию")
-        return startMessage(chatId)
+        await bot.sendMessage(chatId, "Мероприятие уже анонсировано, пройдите регистрацию")
+        return await startMessage(chatId)
       }
     }
   }

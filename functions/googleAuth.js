@@ -1,7 +1,6 @@
 import {google} from "googleapis";
 
-
-export const googleAuth = async () => {
+ const googleAuth = async () => {
   auth = new google.auth.GoogleAuth({
     keyFile: "tokens/credentials.json",
     scopes: "https://www.googleapis.com/auth/spreadsheets",
@@ -22,8 +21,3 @@ let client = await auth.getClient();
 export let googleSheets = google.sheets({version: "v4", auth: client});
 
 
-// let timerId = setTimeout(async function auth() {
-//   await googleAuth()
-//
-//   timerId = setTimeout(auth, 60000000); // (*)
-// }, 60000000);

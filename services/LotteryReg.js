@@ -60,7 +60,7 @@ export const lotteryReg = async (
           resource: {
             values: [[
               date, phone, name, subscribe, tname, Tusername,
-              String(chatId), steamName, ref ? String(ref) : undefined,
+              String(chatId), steamName, ref ? String(ref) : String(chatId),
               null, ip, city, region, country
             ]],
           }

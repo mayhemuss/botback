@@ -3,57 +3,41 @@ import {auth, googleSheets} from "../functions/googleAuth.js";
 import {saveMessages} from "./saveMessages.js";
 import {bot} from "../index.js";
 import {ADMIN_ID} from "../tokens/url.js";
+import {getDataFromExel, saveDataToExel} from "./exelData.js";
 
 
 export const getRegType = async (chatId, registrationSheets, capId = false, commandType) => {
   try {
     console.log("getRegType")
 
-    const getRows = await googleSheets.spreadsheets.values.get({
-      auth,
-      spreadsheetId,
-      range: `${registrationSheets}!G1:I10000`,
-    })
+    //получение данных с экселя
+    const exelData = await getDataFromExel(registrationSheets)
 
-
-
-    if (getRows.data.values === undefined) {
-      await googleSheets.spreadsheets.values.append({
-        auth,
-        spreadsheetId,
-        range: `${registrationSheets}!A:N`,
-        valueInputOption: "RAW",
-        resource: {
-          values: [[
-            "дата", "телефон", "имя", "подписка", "имя в телеге", "ник в телеге",
-            "ид", commandType, "ref", "тип регистрации", "ip", "город", "регион", "страна"
-          ]],
-        }
-      })
-
+    //если данных нету
+    if (exelData.length ===0) {
       return {types: false, index: -1, commandName: undefined, count: 0, userIds: []}
-
+    //если данные есть
     } else {
 
-      const allRow = getRows.data.values.map(elem => {
-        const [userid, commandName, commandId] = elem
-        return {userid, commandName, commandId}
+      //получение всех участников команды
+      const command = exelData.filter(elem => {
+        const {ref} = elem
+        return ref === capId
       })
 
-      const command = allRow.filter(elem => {
-        const {commandId} = elem
-        return commandId === capId
-      })
-
+      //получение всех ид участников команды
       const userIds = command.map(elem => {
-        return elem.userid
+        return elem.chatId
       })
 
-      const user = allRow.map(elem => {
-        return elem.userid
+      //получение юзера
+      const user = exelData.map(elem => {
+        return elem.chatId
       })
+      //проверка есть ли юзер
       const index = user.indexOf(String(chatId))
       const types = index !== -1
+
       return {types, index, commandName: command[0]?.commandName, count: command.length, userIds}
     }
   } catch (e) {

@@ -1,76 +1,61 @@
 import {inlineGameList} from "../games/inlineGameList.js";
 import {gamesList} from "../games/gamesList.js";
-import {bigTeam, capitanRegConfirm, lottery, sky_logo, smallTeam, texts, userRegConfirm} from "../text.js";
+import {bigTeam, capitanRegConfirm, capitanTeam, lottery, sky_logo, smallTeam, texts, userRegConfirm} from "../text.js";
 import {timeCheck} from "./timeCheck.js";
 import {getRegType} from "../services/getRegType.js";
+import {editMessages} from "./editMessages.js";
+import {getCommand} from "../services/getCommand.js";
 
-export const gameToObject = (list, bot) => {
+export const gameToObject = (list) => {
   const actualList = timeCheck(list)
 
   const obj = {
 
     AllGameList: {
       editRegistrationMenu: async (chatId, message_id) => {
-        console.log("AllGameList")
         const message = inlineGameList(timeCheck(gamesList))
-        const form = {
-          chat_id: chatId,
-          message_id
-        }
-        const lastForm = {
-          chat_id: chatId,
-          message_id: +message_id - 1
-        }
+        const inline_keyboard = message.form.reply_markup.inline_keyboard
 
-        try {
-          await bot.editMessageMedia({
-              type: "photo",
-              media: sky_logo
-            },
-            lastForm
-          )
-        } catch (e) {
-        }
-        await bot.editMessageText(message.text, form)
-        return await bot.editMessageReplyMarkup({
-          inline_keyboard: message.form.reply_markup.inline_keyboard
-        }, form)
+        return await editMessages(chatId, message_id, inline_keyboard, message.text, sky_logo)
+
       }
     },
 
     AwaitNew: {
       editRegistrationMenu: async (chatId, message_id) => {
-        console.log("AwaitNew")
-        const form = {
-          chat_id: chatId,
-          message_id
-        }
-        const lastForm = {
-          chat_id: chatId,
-          message_id: +message_id - 1
-        }
-        try {
-          await bot.editMessageMedia({
-              type: "photo",
-              media: sky_logo
-            },
-            lastForm
-          )
-        } catch (e) {
-        }
+        const inline_keyboard = [
+          [{text: "Ожидаем анонс мероприятий", callback_data: "AllGameList"}],
+        ]
+        return await editMessages(chatId, message_id, inline_keyboard, texts.AwaitText, sky_logo)
 
-        await bot.editMessageText(texts.AwaitText,
-          form
-        )
-
-        return await bot.editMessageReplyMarkup({
-            inline_keyboard: [
-              [{text: "Ожидаем анонс мероприятий", callback_data: "AllGameList"}],
-            ]
-          }, form
-        )
       }
-    }
+    },
+    // deleteMember: {
+    //   editRegistrationMenu: async (chatId, message_id, {id}, callData) => {
+    //     const registrationSheets = actualList.filter(game => {
+    //       return game.callData === callData
+    //     })[0].registrationSheets
+    //     const allRow = await getDataFromExel(registrationSheets)
+    //     const member = allRow.filter(row => {
+    //       return row.chatId === chatId
+    //     })[0]
+    //
+    //     if (member.registrationType === "capitan") {
+    //       const index = allRow.findIndex(row => {
+    //         return row.chatId === id
+    //       })
+    //
+    //       await deleteDatainExel(registrationSheets, index)
+    //       return "Done"
+    //
+    //     } else {
+    //       // const message = inlineGameList(timeCheck(gamesList))
+    //       // const inline_keyboard = message.form.reply_markup.inline_keyboard
+    //       return "notDone"
+    //       // return await editMessages(chatId, message_id, inline_keyboard, message.text, sky_logo)
+    //     }
+    //   }
+    // }
   }
 
 
@@ -80,77 +65,119 @@ export const gameToObject = (list, bot) => {
       //регистрация юзера
       obj[event.callData + "_user"] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          console.log("регистрация юзера")
-          const regText = "Регистрация"
-          const form = {
-            chat_id: chatId,
-            message_id
-          }
-          const lastForm = {
-            chat_id: chatId,
-            message_id: +message_id - 1
-          }
-          try {
-            await bot.editMessageMedia({
-                type: "photo",
-                media: event.imageUrl
-              },
-              lastForm
-            )
-          } catch (e) {
 
-          }
+          return await editMessages(chatId, message_id, userRegConfirm(event.callData), texts.userReg)
 
-
-          await bot.editMessageText(texts.userReg,
-            form
-          )
-
-          return await bot.editMessageReplyMarkup({
-              inline_keyboard: userRegConfirm(event.callData)
-            }, form
-          )
         }
       }
+
+
+      obj[event.callData + "_comand"] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+
+          const {type, count, commandName, members} = await getCommand(event.registrationSheets, chatId)
+          if (type === "capitan") {
+
+            const buttons = members.filter(member => {
+              return member.registrationType === "user"
+            }).map((member, index) => {
+              const memberInfo = member.username ? member.username : member.telegramName
+              const query = {
+                id: member.chatId,
+                conf: false,
+                // memberInfo
+              }
+              return [{
+                text: `${index + 1}. Произвести замену ${memberInfo}`,
+                callback_data: `delete?${Object.keys(query).map(elem => {
+                  return `${elem}=${query[elem]}`
+                }).join("&")}#${event.callData}`
+              }]
+            })
+
+            if(buttons.length ===0){
+              const query = {
+                id: chatId,
+                conf: false
+              }
+              buttons.push([{
+                text:"Расформировать команду?",
+                callback_data:`delete?${Object.keys(query).map(elem => {
+                  return `${elem}=${query[elem]}`
+                }).join("&")}#${event.callData}`
+              }])
+            }
+
+            console.log("кнопки"+buttons)
+            const inline_keyboard = [
+              ...buttons,
+              [{
+                text: "<<- Назад",
+                callback_data: event.callData + "_capitan"
+              }]
+            ]
+            return await editMessages(chatId, message_id, inline_keyboard, `В команду ${commandName}  зарегистрировалось ${count} членов команды, \n` +
+              members.map((member, index) => {
+                const memberInfo = member.username ? member.username : member.telegramName
+                return `${index + 1}. ${memberInfo} ${member.registrationType === "capitan" ? "- Капитан" : "- член команды"}`
+              }).join("\n"))
+          } else {
+            const message = inlineGameList(timeCheck(gamesList))
+            const inline_keyboard = message.form.reply_markup.inline_keyboard
+
+            return await editMessages(chatId, message_id, inline_keyboard, message.text, sky_logo)
+          }
+        }
+      }
+
 
       //регистрация капитана
       obj[event.callData + "_capitan"] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          console.log("регистрация капитана")
-          const {types} = await getRegType(chatId, event.registrationSheets)
-          const regText = types ? "Изменить данные" : "Зарегистрироваться"
-          const form = {
-            chat_id: chatId,
-            message_id
-          }
-          const lastForm = {
-            chat_id: chatId,
-            message_id: +message_id - 1
-          }
-          try {
-            await bot.editMessageMedia({
-                type: "photo",
-                media: event.imageUrl
-              },
-              lastForm
-            )
-          } catch (e) {
+          const command = await getCommand(event.registrationSheets, chatId)
+          const {type, count, commandName, capitan} = command
+
+          console.log(command)
+          const regText = type === "noReg" ? "Зарегистрироваться" : "Изменить данные"
+          if (type === "capitan") {
+            console.log("capitan")
+            const inline_keyboard = capitanTeam(count, commandName, event.callData, event.callData, event.webAppUrl, {
+              regText,
+              callData: event.callData,
+              commandMemberCount: event.commandMemberCount,
+              regType: "capitan",
+              commandName
+            })
+            return await editMessages(chatId, message_id, inline_keyboard, `Уважаемый капитан команды ${commandName}, ` +
+              `здесь вы можете посмотреть список членов команды и в случае необходимости произвести замену участника`)
           }
 
-          await bot.editMessageText(texts.capitanRegConf,
-            form
-          )
+
+          if (type === "noReg") {
+            console.log("noReg")
+            const inline_keyboard = capitanRegConfirm({
+              regText,
+              callData: event.callData,
+              commandMemberCount: event.commandMemberCount,
+            }, event.gameName, event.callData, regText, event.webAppUrl, event.callData)
+
+            return await editMessages(chatId, message_id, inline_keyboard, texts.capitanRegConf)
+          }
 
 
-          return await bot.editMessageReplyMarkup({
-              inline_keyboard: capitanRegConfirm({
-                regText,
-                callData: event.callData,
-                commandMemberCount: event.commandMemberCount,
+          if (type === "user") {
+            console.log("user")
+            const capitaninfo = capitan.username ? capitan.username : capitan.telegramName
+            const text = `Свяжитесь со своим капитаном (${capitaninfo}) для подробной информации`
+            const inline_keyboard = [
+              [{
+                text: "<<- Назад",
+                callback_data: event.callData
+              }]
+            ]
+            return await editMessages(chatId, message_id, inline_keyboard, text)
+          }
 
-              }, event.gameName, event.callData, regText, event.webAppUrl, event.callData)
-            }, form
-          )
 
         }
       }
@@ -158,72 +185,22 @@ export const gameToObject = (list, bot) => {
       //меню игры на больше 1
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          console.log("меню игры на больше 1")
-          const form = {
-            chat_id: chatId,
-            message_id
-          }
-          const lastForm = {
-            chat_id: chatId,
-            message_id: +message_id - 1
-          }
+          const inline_keyboard = bigTeam(event.gameName, "AllGameList", `${event.callData}`, event.callData,)
+          return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
 
-          try {
-            await bot.editMessageMedia({
-                type: "photo",
-                media: event.imageUrl
-              },
-              lastForm
-            )
-          } catch (e) {
-          }
-
-          await bot.editMessageText(event.descriptions,
-            form
-          )
-
-          return await bot.editMessageReplyMarkup({
-              inline_keyboard: bigTeam(event.gameName, "AllGameList", `${event.callData}`, event.callData,)
-            }, form
-          )
         }
       }
 
       //нет команды
       obj[event.callData + "_noComand"] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          console.log("нет команды")
-          const form = {
-            chat_id: chatId,
-            message_id
-          }
-          const lastForm = {
-            chat_id: chatId,
-            message_id: +message_id - 1
-          }
-          try {
-            await bot.editMessageMedia({
-                type: "photo",
-                media: event.imageUrl
-              },
-              lastForm
-            )
-          } catch (e) {
-          }
+          const inline_keyboard = [[{
+            text: "<<- Назад",
+            callback_data: event.callData
+          }]]
+          const currentText = `Вы всегда можете найти себе боевых товарищей в комментариях под постом с анонсом мероприятия ${event.anoncedPost}`
+          return await editMessages(chatId, message_id, inline_keyboard, currentText)
 
-          console.log("photo")
-          await bot.editMessageText(`Вы всегда можете найти себе боевых товарищей в комментариях под постом с анонсом мероприятия ${event.anoncedPost}`,
-            form
-          )
-          console.log("text")
-          return await bot.editMessageReplyMarkup({
-            inline_keyboard: [
-              [{
-                text: "<<- Назад",
-                callback_data: event.callData
-              }]
-            ]
-          }, form)
         }
       }
     }
@@ -232,40 +209,16 @@ export const gameToObject = (list, bot) => {
     if (event.type === "game") {
       obj[`${event.callData}_reglament`] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          console.log("reglament")
-          const form = {
-            chat_id: chatId,
-            message_id
-          }
-          const lastForm = {
-            chat_id: chatId,
-            message_id: +message_id - 1
-          }
-          try {
-            await bot.editMessageMedia({
-                type: "photo",
-                media: event.imageUrl
-              },
-              lastForm
-            )
-          } catch (e) {
-          }
 
-          console.log("photo")
-          await bot.editMessageText(event.reglaments,
-            form
-          )
-          console.log("text")
-          await bot.editMessageReplyMarkup({
-              inline_keyboard: [
-                [{
-                  text: "<<- Назад",
-                  callback_data: event.callData
-                }]
-              ]
-            }, form
-          )
-          console.log("form")
+          const inline_keyboard = [
+            [{
+              text: "<<- Назад",
+              callback_data: event.callData
+            }]
+          ]
+
+          return await editMessages(chatId, message_id, inline_keyboard, event.reglaments,)
+
         }
       }
     }
@@ -275,49 +228,27 @@ export const gameToObject = (list, bot) => {
       //регистрация одиночных
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          console.log("регистрация одиночных")
+
           const {types} = getRegType(chatId, event.registrationSheets)
           const regText = types ? "Изменить данные" : "Зарегистрироваться"
           const regType = "user"
-          const form = {
-            chat_id: chatId,
-            message_id
-          }
-          const lastForm = {
-            chat_id: chatId,
-            message_id: +message_id - 1
-          }
-          try {
-            await bot.editMessageMedia({
-                type: "photo",
-                media: event.imageUrl
-              },
-              lastForm
-            )
-          } catch (e) {
-          }
-
-          await bot.editMessageText(event.descriptions,
-            form
+          const inline_keyboard = smallTeam(
+            event.gameName,
+            "AllGameList",
+            regText,
+            {
+              regText,
+              callData: event.callData,
+              commandMemberCount: event.commandMemberCount,
+              ref: "",
+              regType
+            },
+            event.webAppUrl,
+            event.callData
           )
 
-          return await bot.editMessageReplyMarkup({
-              inline_keyboard: smallTeam(
-                event.gameName,
-                "AllGameList",
-                regText,
-                {
-                  regText,
-                  callData: event.callData,
-                  commandMemberCount: event.commandMemberCount,
-                  ref: "",
-                  regType
-                },
-                event.webAppUrl,
-                event.callData
-              )
-            }, form
-          )
+          return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
+
         }
       }
     }
@@ -327,86 +258,36 @@ export const gameToObject = (list, bot) => {
       //начальное меню лотереи
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          const form = {
-            chat_id: chatId,
-            message_id
-          }
-          const lastForm = {
-            chat_id: chatId,
-            message_id: +message_id - 1
-          }
-          try {
-            await bot.editMessageMedia({
-                type: "photo",
-                media: event.imageUrl
-              },
-              lastForm
-            )
-          } catch (e) {
-          }
-
-          await bot.editMessageText(event.descriptions,
-            form
+          const inline_keyboard = lottery(
+            event.gameName,
+            "AllGameList",
+            event.callData,
+            event.webAppUrl,
+            {
+              callData: event.callData,
+            }
           )
-          return await bot.editMessageReplyMarkup({
-              inline_keyboard: lottery(
-                event.gameName,
-                "AllGameList",
-                event.callData,
-                event.webAppUrl,
-                {
-                  callData: event.callData,
-                }
-              )
 
-            }, form
-          )
+          return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
+
         }
       }
       //регламент лотереи
       obj[`${event.callData}_reglament`] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          const form = {
-            chat_id: chatId,
-            message_id
-          }
-          const lastForm = {
-            chat_id: chatId,
-            message_id: +message_id - 1
-          }
-          try {
-            await bot.editMessageMedia({
-                type: "photo",
-                media: event.imageUrl
-              },
-              lastForm
-            )
-          } catch (e) {
-          }
+          const inline_keyboard = [
+            [{
+              text: "<<- Назад",
+              callback_data: event.callData
+            }]
+          ]
 
-          console.log("photo")
-          await bot.editMessageText(event.reglaments,
-            form
-          )
-          console.log("text")
-          await bot.editMessageReplyMarkup({
-              inline_keyboard: [
-                [{
-                  text: "<<- Назад",
-                  callback_data: event.callData
-                }]
-              ]
-            }, form
-          )
+          return await editMessages(chatId, message_id, inline_keyboard, event.reglaments)
+
         }
       }
-
-
     }
-
-
   })
-
 
   console.log(JSON.stringify(obj))
   return obj

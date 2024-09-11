@@ -193,7 +193,7 @@ export const bigTeam = (gameName, prevMenu, callData) => {
       callback_data: `${callData}_reglament`
     }],
     [{
-      text: `Зарегистрироваться как капитан`,
+      text: `Капитан команды / Команда`,
       callback_data: callData + "_capitan"
     }],
     [{
@@ -203,7 +203,7 @@ export const bigTeam = (gameName, prevMenu, callData) => {
     }],
     [{
       text: `У меня нет команды 😢`,
-      callback_data: callData + "_noComand"
+      callback_data: callData + "_noComand",
 
     }]
     ,
@@ -226,6 +226,28 @@ export const lottery = (gameName, prevMenu, callData, webAppUrl, rawQuery) => {
       web_app: {
         url: `${webAppUrl}${lenght}${query}`,
       }
+    }],
+    [{
+      text: "<<- Назад",
+      callback_data: prevMenu
+    }]
+  ]
+}
+
+
+export const capitanTeam = (count, commandName, prevMenu, callData, webAppUrl, rawQuery) => {
+  const {lenght, query} = rawQueryToString(rawQuery)
+  return [
+    [{
+      text: "Изменить регистрастрационные данные",
+      web_app: {
+        url: `${webAppUrl}${lenght}${query}`,
+        // url: `${webAppUrl}`,
+      }
+    }],
+    [{
+      text: "Список участников команды",
+      callback_data: callData + "_comand"
     }],
     [{
       text: "<<- Назад",

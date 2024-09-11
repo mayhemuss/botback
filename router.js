@@ -7,9 +7,6 @@ import {timeCheck} from "./functions/timeCheck.js";
 import {ADMIN_ID} from "./tokens/url.js";
 import {gameChangeData} from "./services/gameChangeData.js";
 import {gameNewRegGame} from "./services/gameNewRegGame.js";
-import {texts} from "./text.js";
-import {auth, googleSheets} from "./functions/googleAuth.js";
-import {spreadsheetId} from "./tokens/token.js";
 import {lotteryReg} from "./services/LotteryReg.js";
 
 
@@ -101,7 +98,9 @@ router.post("/regis",
       }
       //lottery
       if (type === "lottery") {
-      await  lotteryReg()
+      await  lotteryReg( ip, chatId, registrationSheets, ref,
+        username, date, phone, name, subscribe,
+        tname, steamName, commandMemberCount, callDataInGame, lotterySheets)
       }
       return await res.json({done: "done"})
 
