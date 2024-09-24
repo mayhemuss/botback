@@ -47,7 +47,7 @@ export const msgCallbackQueryHandler = async (msg) => {
     const gameObj = gameToObject(gamesList)
 
     if (callBackData.startsWith("delete")) {
-     return  await deleteMemberFromTeam(callBackData, gameObj, chatId,message_id, messageToSave)
+      return await deleteMemberFromTeam(callBackData, gameObj, chatId, message_id, messageToSave)
     }
     //регистрация открыта
     if (Object.keys(gameObj).includes(callBackData)) {
@@ -66,8 +66,11 @@ export const msgCallbackQueryHandler = async (msg) => {
   } catch (error) {
     console.log(error)
     await bot.sendMessage(chatId, "Ожидаем анонса новых мероприятий...")
-    await bot.sendMessage(ADMIN_ID,
-      JSON.stringify({error}) + ` что то пошло не так у ${chatId}`)
+    if (error.message !== "ETELEGRAM: 400 Bad Request: message is not modified: specified new message content and reply markup are exactly the same as a current content and reply markup of the message") {
+      await bot.sendMessage(ADMIN_ID,
+        JSON.stringify({error}) + ` что то пошло не так у ${chatId}`)
+    }
+
     return await saveMessages(JSON
       .stringify({...messageToSave, answer: "ожидаем новых мероприятий"}), chatId,)
 
