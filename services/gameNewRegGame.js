@@ -32,7 +32,7 @@ export const gameNewRegGame = async (
   const Tusername = username ? "https://t.me/" + username : ""
 
   //битая реф ссылка
-  if (ref === "undefined") {
+  if (ref === "undefined" && games[0].commandMemberCount > 1) {
     await saveMessages("битая реф ссылка", chatId, "bot")
     await bot.sendMessage(chatId, "Произошла техническая ошибка, сейчас я свяжусь с вашим капитаном и мы ее исправим")
     return await bot.sendMessage(ADMIN_ID, "битая ссылка у " + chatId)
@@ -45,7 +45,7 @@ export const gameNewRegGame = async (
   })
 
   //если команды нет и ты не капитан
-  if (currentCommand.length === 0 && regType !== "capitan") {
+  if (currentCommand.length === 0 && regType !== "capitan" && games[0].commandMemberCount > 1) {
     await bot.sendMessage(chatId, "Капитан команды расформировал команду")
     return await saveMessages(`Капитан команды расформировал команду`, chatId, "bot")
   }

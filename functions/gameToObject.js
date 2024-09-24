@@ -95,20 +95,20 @@ export const gameToObject = (list) => {
               }]
             })
 
-            if(buttons.length ===0){
+            if (buttons.length === 0) {
               const query = {
                 id: chatId,
                 conf: false
               }
               buttons.push([{
-                text:"Расформировать команду?",
-                callback_data:`delete?${Object.keys(query).map(elem => {
+                text: "Расформировать команду?",
+                callback_data: `delete?${Object.keys(query).map(elem => {
                   return `${elem}=${query[elem]}`
                 }).join("&")}#${event.callData}`
               }])
             }
 
-            console.log("кнопки"+buttons)
+            console.log("кнопки" + buttons)
             const inline_keyboard = [
               ...buttons,
               [{
@@ -229,7 +229,7 @@ export const gameToObject = (list) => {
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
 
-          const {types} = getRegType(chatId, event.registrationSheets)
+          const {types} = await getRegType(chatId, event.registrationSheets)
           const regText = types ? "Изменить данные" : "Зарегистрироваться"
           const regType = "user"
           const inline_keyboard = smallTeam(

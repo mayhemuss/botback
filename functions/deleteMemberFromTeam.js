@@ -18,6 +18,8 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
       params[name] = param
     })
 
+    messageToSave.deleteParams = params
+
     //получение ид таблицы
     const registrationSheets = timeCheck(gamesList).filter(game => {
       return game.callData === callData
@@ -30,6 +32,8 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
     const member = allRow.filter(row => {
       return +row.chatId === +chatId
     })[0]
+
+    messageToSave.deleteMember = member
 
     //подтверждение удаления
     if (params.conf === "true") {
@@ -48,7 +52,8 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
         if (+params.id === +chatId) {
           await deleteDatainExel(registrationSheets, index)
           await gameObj[callData].editRegistrationMenu(chatId, message_id)
-          return bot.sendMessage(chatId, "Команда успешно расформирована")
+          await bot.sendMessage(chatId, "Команда успешно расформирована")
+          return await saveMessages(JSON.stringify({...messageToSave, answer:`расформировал команду`}))
 
           //если удаляет члена команды
         } else {

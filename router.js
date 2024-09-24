@@ -47,7 +47,7 @@ router.post("/regis",
     } = req.body;
 
     try {
-      await saveMessages(JSON.stringify(req.body),chatId,"bot")
+      await saveMessages(JSON.stringify(req.body), chatId, "bot")
       // await saveMessages(`отправил данные, телефон - ${phone}, имя - ${name}`, chatId)
       const [anonced, dateEnd] = await callData.split("_")
 
@@ -74,33 +74,59 @@ router.post("/regis",
 
       //регистрация на игры
       if (type === "game") {
-        //проверка игры
-        const {
-          index,
-          commandName: comName,
-          userIds,
-          count
-        } = await getRegType(chatId, registrationSheets, ref, "имя команды")
-        //замена данных
-        if (index !== -1) {
-          await gameChangeData(
-            index, registrationSheets, date, phone,
-            name, subscribe, tname, username, chatId, ip
-          )
-        } else {
-          //новая регистрация
-          await gameNewRegGame(
-            registrationSheets, date, phone, name, subscribe, tname, username,
-            chatId, ip, ref, commandName, regType, games, userIds, callDataInGame,
-            gameName, comName, count
-          )
-        }
+
+        //командные игры
+        // if (commandMemberCount > 1) {
+          //проверка игры
+          const {
+            index,
+            commandName: comName,
+            userIds,
+            count
+          } = await getRegType(chatId, registrationSheets, ref, "имя команды")
+          //замена данных
+          if (index !== -1) {
+            await gameChangeData(
+              index, registrationSheets, date, phone,
+              name, subscribe, tname, username, chatId, ip
+            )
+          } else {
+            //новая регистрация
+            await gameNewRegGame(
+              registrationSheets, date, phone, name, subscribe, tname, username,
+              chatId, ip, ref, commandName, regType, games, userIds, callDataInGame,
+              gameName, comName, count
+            )
+          }
+          //одиночная игра
+        // }else{
+        //   //проверка игры
+        //   const {
+        //     index,
+        //
+        //   } = await getRegType(chatId, registrationSheets,  )
+        //   //замена данных
+        //   if (index !== -1) {
+        //     await gameChangeData(
+        //       index, registrationSheets, date, phone,
+        //       name, subscribe, tname, username, chatId, ip
+        //     )
+        //   } else {
+        //     //новая регистрация
+        //     await gameNewRegGame(
+        //       registrationSheets, date, phone, name, subscribe, tname, username,
+        //       chatId, ip, ref, commandName, regType, games, userIds, callDataInGame,
+        //       gameName, comName, count
+        //     )
+        //   }
+        // }
+
       }
       //lottery
       if (type === "lottery") {
-      await  lotteryReg( ip, chatId, registrationSheets, ref,
-        username, date, phone, name, subscribe,
-        tname, steamName, commandMemberCount, callDataInGame, lotterySheets)
+        await lotteryReg(ip, chatId, registrationSheets, ref,
+          username, date, phone, name, subscribe,
+          tname, steamName, commandMemberCount, callDataInGame, lotterySheets)
       }
       return await res.json({done: "done"})
 

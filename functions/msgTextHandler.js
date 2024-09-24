@@ -24,24 +24,6 @@ export const msgTextHandler = async (msg) => {
 
   try {
 
-    if (text === "msgforcap" && chatId === ADMIN_ID) {
-      const allRow = await getDataFromExel("Valorantreg15_09_24")
-      const capitans = allRow.filter(row => {
-        return row.registrationType === "capitan"
-      }).map(capitan => {
-        return capitan.chatId
-      })
-
-      for (const capitan of capitans) {
-        await bot.sendMessage(capitan, "Добавили возможность при необходимости производить замену участников команды, " +
-          "а так же просматривать список зарегистрировавшихся участников команды. Для получения данного функционала необходимо " +
-          "заново запустить бота и перейти в нужную дисциплину. \n\n" +
-          "Играй и побеждай вместе со SkyNet GAMES.")
-
-      }
-      return bot.sendMessage(ADMIN_ID,"done")
-    }
-
     //проверка ругательств
     if (text && textCheck(text, gameVariantsText.swear_words)) {
       await swearWords(chatId)
