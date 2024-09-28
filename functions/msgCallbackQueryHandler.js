@@ -23,9 +23,9 @@ export const msgCallbackQueryHandler = async (msg) => {
 
   const signStatus = await bot.getChatMember(skgID, chatId)
   if (signStatus.status === 'left') {
-    return   await bot.sendMessage(chatId, texts.subsribeText, forms.subscribeForm)
-    // return await saveMessages(JSON
-    //   .stringify({...messageToSave, answer: texts.subsribeText}), chatId,)
+    await bot.sendMessage(chatId, texts.subsribeText, forms.subscribeForm)
+    return await saveMessages(JSON
+      .stringify({...messageToSave, answer: texts.subsribeText}), chatId,)
   }
 
   try {
@@ -34,13 +34,13 @@ export const msgCallbackQueryHandler = async (msg) => {
     if (callBackData === "Подписался!") {
       const signStatus = await bot.getChatMember(skgID, chatId)
       if (signStatus.status === 'left') {
-        return  await bot.sendMessage(chatId, texts.stillNeedSubscribe, forms.subscribeForm)
-        // return await saveMessages(JSON
-        //   .stringify({...messageToSave, answer: texts.stillNeedSubscribe}), chatId,)
+        await bot.sendMessage(chatId, texts.stillNeedSubscribe, forms.subscribeForm)
+        return await saveMessages(JSON
+          .stringify({...messageToSave, answer: texts.stillNeedSubscribe}), chatId,)
       } else {
-        return   await startMessage(chatId)
-        // return await saveMessages(JSON
-        //   .stringify({...messageToSave, answer: "подписался, попал в главное меню"}), chatId,)
+        await startMessage(chatId)
+        return await saveMessages(JSON
+          .stringify({...messageToSave, answer: "подписался, попал в главное меню"}), chatId,)
       }
     }
 
@@ -53,15 +53,15 @@ export const msgCallbackQueryHandler = async (msg) => {
     if (Object.keys(gameObj).includes(callBackData)) {
 
 
-      return await gameObj[callBackData].editRegistrationMenu(chatId, message_id)
-      // return await saveMessages(JSON.stringify({...messageToSave, answer: "нажата кнопка"}), chatId)
+      await gameObj[callBackData].editRegistrationMenu(chatId, message_id)
+      return await saveMessages(JSON.stringify({...messageToSave, answer: "нажата кнопка"}), chatId)
 
     }
 
     //регистрация закрыта
-    return await gameObj.AwaitNew.editRegistrationMenu(chatId, message_id)
-    // return await saveMessages(JSON
-    //   .stringify({...messageToSave, answer: "ожидаем новых мероприятий"}), chatId,)
+    await gameObj.AwaitNew.editRegistrationMenu(chatId, message_id)
+    return await saveMessages(JSON
+      .stringify({...messageToSave, answer: "ожидаем новых мероприятий"}), chatId,)
 
   } catch (error) {
     console.log(error)

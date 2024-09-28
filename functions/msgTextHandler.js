@@ -26,25 +26,25 @@ export const msgTextHandler = async (msg) => {
 
     //проверка ругательств
     if (text && textCheck(text, gameVariantsText.swear_words)) {
-      return  await swearWords(chatId)
-      // return await saveMessages(JSON
-      //   .stringify({...messageToSave, answer: "Ругательство"}), chatId)
+      await swearWords(chatId)
+      return await saveMessages(JSON
+        .stringify({...messageToSave, answer: "Ругательство"}), chatId)
     }
 
     //проверка подписки
 
     const signStatus = await bot.getChatMember(skgID, chatId)
     if (signStatus.status === 'left') {
-      return   await bot.sendMessage(chatId, texts.subsribeText, forms.subscribeForm)
-      // return await saveMessages(JSON
-      //   .stringify({...messageToSave, answer: "не подписан"}), chatId)
+      await bot.sendMessage(chatId, texts.subsribeText, forms.subscribeForm)
+      return await saveMessages(JSON
+        .stringify({...messageToSave, answer: "не подписан"}), chatId)
     }
 
 
     if (text === "/start") {
-      return    await startMessage(chatId)
-      // return await saveMessages(JSON
-      //   .stringify({...messageToSave, answer: "startMessage"}), chatId)
+      await startMessage(chatId)
+      return await saveMessages(JSON
+        .stringify({...messageToSave, answer: "startMessage"}), chatId)
     }
 
 
@@ -105,20 +105,20 @@ export const msgTextHandler = async (msg) => {
           messageToSave.count = count
 
           if (count === 0) {
-            return   await bot.sendMessage(chatId, `Капитан расформировал команду`)
-            // return await saveMessages(JSON.stringify(
-            //   {
-            //     ...messageToSave, answer: `Капитан расформировал команду`
-            //   }), chatId, "bot")
+            await bot.sendMessage(chatId, `Капитан расформировал команду`)
+            return await saveMessages(JSON.stringify(
+              {
+                ...messageToSave, answer: `Капитан расформировал команду`
+              }), chatId, "bot")
           }
 
 
           if (count >= commandMemberCount) {
-            return   await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
-            // return await saveMessages(JSON.stringify(
-            //   {
-            //     ...messageToSave, answer: `Команды ${commandName} уже набрана`
-            //   }), chatId, "bot")
+            await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
+            return await saveMessages(JSON.stringify(
+              {
+                ...messageToSave, answer: `Команды ${commandName} уже набрана`
+              }), chatId, "bot")
           }
 
           const {lenght, query} = rawQueryToString(
@@ -135,18 +135,18 @@ export const msgTextHandler = async (msg) => {
 
           await bot.sendPhoto(chatId, imageUrl)
 
-          return     await bot.sendMessage(
+          await bot.sendMessage(
             chatId,
             texts.gameReferalText(commandName, gameName),
             forms.gameReferalForm(webAppUrl, query)
           )
 
-          // return await saveMessages(JSON.stringify(
-          //   {
-          //     ...messageToSave,
-          //     answer: "меню регистрации участника команды"
-          //   }
-          // ), chatId)
+          return await saveMessages(JSON.stringify(
+            {
+              ...messageToSave,
+              answer: "меню регистрации участника команды"
+            }
+          ), chatId)
         }
 
         if (type === "lottery") {
