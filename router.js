@@ -82,7 +82,8 @@ router.post("/regis",
             index,
             commandName: comName,
             userIds,
-            count
+            count,
+            exelData
           } = await getRegType(chatId, registrationSheets, ref, "имя команды")
           //замена данных
           if (index !== -1) {
@@ -95,7 +96,7 @@ router.post("/regis",
             await gameNewRegGame(
               registrationSheets, date, phone, name, subscribe, tname, username,
               chatId, ip, ref, commandName, regType, games, userIds, callDataInGame,
-              gameName, comName, count
+              gameName, comName, count, exelData
             )
           }
           //одиночная игра

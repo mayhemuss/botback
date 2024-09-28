@@ -23,7 +23,8 @@ export const gameNewRegGame = async (
   callDataInGame,
   gameName,
   comName,
-  count
+  count,
+  exelData
 ) => {
   //получение региона по ip
   const responce = await fetch(`https://2domains.ru/api/web-tools/geoip?ip=${ip}`)
@@ -39,8 +40,8 @@ export const gameNewRegGame = async (
   }
 
   //получение команды
-  const allRow = await getDataFromExel(registrationSheets)
-  const currentCommand = allRow.filter(row => {
+  // const allRow = await getDataFromExel(registrationSheets)
+  const currentCommand = exelData.filter(row => {
     return +row.ref === +ref
   })
 

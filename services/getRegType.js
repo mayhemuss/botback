@@ -38,7 +38,7 @@ export const getRegType = async (chatId, registrationSheets, capId = false, comm
       const index = user.indexOf(String(chatId))
       const types = index !== -1
 
-      return {types, index, commandName: command[0]?.commandName, count: command.length, userIds}
+      return {types, index, commandName: command[0]?.commandName, count: command.length, userIds, exelData}
     }
   } catch (e) {
     console.log(e)
