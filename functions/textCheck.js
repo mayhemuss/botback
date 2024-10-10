@@ -1,4 +1,3 @@
-
 export const textCheck = (text, tests) => {
   const searchText = text.toLowerCase()
     .replaceAll("?", "")
@@ -11,6 +10,22 @@ export const textCheck = (text, tests) => {
       if (searchText[j].includes(tests[i])) {
         return true
       }
+  }
+  return false
+}
+
+const variants = [
+  "/logs",
+  "/message",
+  '/tables',
+  "/admin"
+]
+
+export const adminsCommandCheck = (text) => {
+  for (let variant of variants) {
+    if (text.startsWith(variant)) {
+      return true
+    }
   }
   return false
 }

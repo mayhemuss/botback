@@ -5,6 +5,8 @@ import {timeCheck} from "./timeCheck.js";
 import {getRegType} from "../services/getRegType.js";
 import {editMessages} from "./editMessages.js";
 import {getCommand} from "../services/getCommand.js";
+import UserRegService from "../services/UserRegService.js";
+import DisciplineService from "../services/DisciplineService.js";
 
 export const gameToObject = (list) => {
   const actualList = timeCheck(list)
@@ -23,39 +25,11 @@ export const gameToObject = (list) => {
 
     AwaitNew: {
       editRegistrationMenu: async (chatId, message_id) => {
-        const inline_keyboard = [
-          [{text: "Ожидаем анонс мероприятий", callback_data: "AllGameList"}],
-        ]
+        const inline_keyboard = [[{text: "Ожидаем анонс мероприятий", callback_data: "AllGameList"}],]
         return await editMessages(chatId, message_id, inline_keyboard, texts.AwaitText, sky_logo)
 
       }
     },
-    // deleteMember: {
-    //   editRegistrationMenu: async (chatId, message_id, {id}, callData) => {
-    //     const registrationSheets = actualList.filter(game => {
-    //       return game.callData === callData
-    //     })[0].registrationSheets
-    //     const allRow = await getDataFromExel(registrationSheets)
-    //     const member = allRow.filter(row => {
-    //       return row.chatId === chatId
-    //     })[0]
-    //
-    //     if (member.registrationType === "capitan") {
-    //       const index = allRow.findIndex(row => {
-    //         return row.chatId === id
-    //       })
-    //
-    //       await deleteDatainExel(registrationSheets, index)
-    //       return "Done"
-    //
-    //     } else {
-    //       // const message = inlineGameList(timeCheck(gamesList))
-    //       // const inline_keyboard = message.form.reply_markup.inline_keyboard
-    //       return "notDone"
-    //       // return await editMessages(chatId, message_id, inline_keyboard, message.text, sky_logo)
-    //     }
-    //   }
-    // }
   }
 
 
@@ -74,18 +48,22 @@ export const gameToObject = (list) => {
 
       obj[event.callData + "_comand"] = {
         editRegistrationMenu: async (chatId, message_id) => {
+          const disciplineId = await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
+          const user = await UserRegService.getUser(disciplineId, chatId)
 
-          const {type, count, commandName, members} = await getCommand(event.registrationSheets, chatId)
-          if (type === "capitan") {
+
+          // const {type, count, commandName, members} = await getCommand(event.registrationSheets, chatId)
+          if (user.registrationType === "capitan") {
+            const members = await UserRegService.getCommand(disciplineId, user.ref)
+            const count = members?.length
+            const commandName = members[0]?.commandName
 
             const buttons = members.filter(member => {
               return member.registrationType === "user"
             }).map((member, index) => {
-              const memberInfo = member.username ? member.username : member.telegramName
+              const memberInfo = member.userName ? member.userName.split("t.me/")[1] : member.telegramName
               const query = {
-                id: member.chatId,
-                conf: false,
-                // memberInfo
+                id: member.chatId, conf: false, // memberInfo
               }
               return [{
                 text: `${index + 1}. Произвести замену ${memberInfo}`,
@@ -97,30 +75,23 @@ export const gameToObject = (list) => {
 
             if (buttons.length === 0) {
               const query = {
-                id: chatId,
-                conf: false
+                id: chatId, conf: false
               }
               buttons.push([{
-                text: "Расформировать команду?",
-                callback_data: `delete?${Object.keys(query).map(elem => {
+                text: "Расформировать команду?", callback_data: `delete?${Object.keys(query).map(elem => {
                   return `${elem}=${query[elem]}`
                 }).join("&")}#${event.callData}`
               }])
             }
 
-            console.log("кнопки" + buttons)
-            const inline_keyboard = [
-              ...buttons,
-              [{
-                text: "<<- Назад",
-                callback_data: event.callData + "_capitan"
-              }]
-            ]
-            return await editMessages(chatId, message_id, inline_keyboard, `В команду ${commandName}  зарегистрировалось ${count} членов команды, \n` +
-              members.map((member, index) => {
-                const memberInfo = member.username ? member.username : member.telegramName
-                return `${index + 1}. ${memberInfo} ${member.registrationType === "capitan" ? "- Капитан" : "- член команды"}`
-              }).join("\n"))
+            console.log("кнопки" + buttons);
+            const inline_keyboard = [...buttons, [{
+              text: "<<- Назад", callback_data: event.callData + "_capitan"
+            }]]
+            return await editMessages(chatId, message_id, inline_keyboard, `В команду ${commandName}  зарегистрировалось ${count} членов команды, \n` + members.map((member, index) => {
+              const memberInfo = member.userName ? member.userName : member.telegramName
+              return `${index + 1}. ${memberInfo} ${member.registrationType === "capitan" ? "- Капитан" : "- член команды"}`
+            }).join("\n"))
           } else {
             const message = inlineGameList(timeCheck(gamesList))
             const inline_keyboard = message.form.reply_markup.inline_keyboard
@@ -134,12 +105,21 @@ export const gameToObject = (list) => {
       //регистрация капитана
       obj[event.callData + "_capitan"] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          const command = await getCommand(event.registrationSheets, chatId)
-          const {type, count, commandName, capitan} = command
+          const disciplineId = await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
+          const user = await UserRegService.getUser(disciplineId, chatId)
+          const type = user?.registrationType
 
-          console.log(command)
-          const regText = type === "noReg" ? "Зарегистрироваться" : "Изменить данные"
+
+          // const command = await getCommand(event.registrationSheets, chatId)
+          // const {type, count, commandName, capitan} = command
+
+          // console.log(command)
+          const regText = type === "noReg" || type === undefined ? "Зарегистрироваться" : "Изменить данные"
           if (type === "capitan") {
+            const members = await UserRegService.getCommand(disciplineId, user.ref)
+            const count = members?.length
+            const commandName = members[0]?.commandName
+
             console.log("capitan")
             const inline_keyboard = capitanTeam(count, commandName, event.callData, event.callData, event.webAppUrl, {
               regText,
@@ -148,17 +128,14 @@ export const gameToObject = (list) => {
               regType: "capitan",
               commandName
             })
-            return await editMessages(chatId, message_id, inline_keyboard, `Уважаемый капитан команды ${commandName}, ` +
-              `здесь вы можете посмотреть список членов команды и в случае необходимости произвести замену участника`)
+            return await editMessages(chatId, message_id, inline_keyboard, `Уважаемый капитан команды ${commandName}, ` + `здесь вы можете посмотреть список членов команды и в случае необходимости произвести замену участника`)
           }
 
 
-          if (type === "noReg") {
+          if (type === "noReg" || type === undefined) {
             console.log("noReg")
             const inline_keyboard = capitanRegConfirm({
-              regText,
-              callData: event.callData,
-              commandMemberCount: event.commandMemberCount,
+              regText, callData: event.callData, commandMemberCount: event.commandMemberCount,
             }, event.gameName, event.callData, regText, event.webAppUrl, event.callData)
 
             return await editMessages(chatId, message_id, inline_keyboard, texts.capitanRegConf)
@@ -167,15 +144,17 @@ export const gameToObject = (list) => {
 
           if (type === "user") {
             console.log("user")
-            const capitaninfo = capitan.username ? capitan.username : capitan.telegramName
+            const members = await UserRegService.getCommand(disciplineId, user.ref)
+            const capitan = members.filter(member => {
+              return member.registrationType === "capitan"
+            })[0]
+
+            const capitaninfo = capitan.userName ? capitan.userName : capitan.telegramName
             const text = `Свяжитесь со своим капитаном (${capitaninfo}) для подробной информации`
-            const inline_keyboard = [
-              [{
-                text: "<<- Назад",
-                callback_data: event.callData
-              }]
-            ]
-            return await editMessages(chatId, message_id, inline_keyboard, text)
+            const inline_keyboard = [[{
+              text: "<<- Назад", callback_data: event.callData
+            }]]
+            return await editMessages(chatId, message_id, inline_keyboard, text);
           }
 
 
@@ -195,8 +174,7 @@ export const gameToObject = (list) => {
       obj[event.callData + "_noComand"] = {
         editRegistrationMenu: async (chatId, message_id) => {
           const inline_keyboard = [[{
-            text: "<<- Назад",
-            callback_data: event.callData
+            text: "<<- Назад", callback_data: event.callData
           }]]
           const currentText = `Вы всегда можете найти себе боевых товарищей в комментариях под постом с анонсом мероприятия ${event.anoncedPost}`
           return await editMessages(chatId, message_id, inline_keyboard, currentText)
@@ -210,12 +188,9 @@ export const gameToObject = (list) => {
       obj[`${event.callData}_reglament`] = {
         editRegistrationMenu: async (chatId, message_id) => {
 
-          const inline_keyboard = [
-            [{
-              text: "<<- Назад",
-              callback_data: event.callData
-            }]
-          ]
+          const inline_keyboard = [[{
+            text: "<<- Назад", callback_data: event.callData
+          }]]
 
           return await editMessages(chatId, message_id, inline_keyboard, event.reglaments,)
 
@@ -228,24 +203,15 @@ export const gameToObject = (list) => {
       //регистрация одиночных
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
+          const disciplineId = await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
+          const user = await UserRegService.getUser(disciplineId, chatId)
 
-          const {types} = await getRegType(chatId, event.registrationSheets)
-          const regText = types ? "Изменить данные" : "Зарегистрироваться"
+          // const {types} = await getRegType(chatId, event.registrationSheets)
+          const regText = user ? "Изменить данные" : "Зарегистрироваться"
           const regType = "user"
-          const inline_keyboard = smallTeam(
-            event.gameName,
-            "AllGameList",
-            regText,
-            {
-              regText,
-              callData: event.callData,
-              commandMemberCount: event.commandMemberCount,
-              ref: "",
-              regType
-            },
-            event.webAppUrl,
-            event.callData
-          )
+          const inline_keyboard = smallTeam(event.gameName, "AllGameList", regText, {
+            regText, callData: event.callData, commandMemberCount: event.commandMemberCount, ref: "", regType
+          }, event.webAppUrl, event.callData)
 
           return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
 
@@ -258,15 +224,9 @@ export const gameToObject = (list) => {
       //начальное меню лотереи
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          const inline_keyboard = lottery(
-            event.gameName,
-            "AllGameList",
-            event.callData,
-            event.webAppUrl,
-            {
-              callData: event.callData,
-            }
-          )
+          const inline_keyboard = await lottery(event.gameName, "AllGameList", event.callData, event.webAppUrl, {
+            callData: event.callData,
+          } , chatId)
 
           return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
 
@@ -275,12 +235,9 @@ export const gameToObject = (list) => {
       //регламент лотереи
       obj[`${event.callData}_reglament`] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          const inline_keyboard = [
-            [{
-              text: "<<- Назад",
-              callback_data: event.callData
-            }]
-          ]
+          const inline_keyboard = [[{
+            text: "<<- Назад", callback_data: event.callData
+          }]]
 
           return await editMessages(chatId, message_id, inline_keyboard, event.reglaments)
 

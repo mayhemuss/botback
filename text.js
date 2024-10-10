@@ -1,6 +1,9 @@
 import {BOT_NAME} from "./tokens/url.js";
 import {rawQueryToString} from "./functions/rawQueryToString.js";
 import {codeText} from "./functions/codeDecode.js";
+import {Discipline} from "./models/models.js";
+import DisciplineService from "./services/DisciplineService.js";
+import UserRegService from "./services/UserRegService.js";
 
 export const sky_logo = "https://sun9-36.userapi.com/impg/5wsa0laxsuOBStXoQTHxvyy1WXL1x9XWQgguhg/fpeANuWJtRc.jpg?size=1920x1080&quality=95&sign=484509bab898750662d9f9e780afc5b5&type=album"
 
@@ -214,15 +217,19 @@ export const bigTeam = (gameName, prevMenu, callData) => {
   ]
 }
 
-export const lottery = (gameName, prevMenu, callData, webAppUrl, rawQuery) => {
-  const {query, lenght} = rawQueryToString(rawQuery)
-  return [
+export const lottery = async (gameName, prevMenu, callData, webAppUrl, rawQuery, chatId) => {
+  const disciplineId = await DisciplineService.createOrGet(callData, gameName, "lottery", callData.split("_")[1])
+  const user = await UserRegService.getUser(disciplineId, chatId)
+  const regText = user ? "Изменить данные" : `Получить реферальную ссылку`
+  const {query, lenght} = rawQueryToString({...rawQuery, regText})
+
+  return  [
     [{
       text: `Регламент ${gameName}`,
       callback_data: `${callData}_reglament`
     }],
     [{
-      text: `Получить реферальную ссылку`,
+      text: regText,
       web_app: {
         url: `${webAppUrl}${lenght}${query}`,
       }

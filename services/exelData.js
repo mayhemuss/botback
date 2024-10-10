@@ -31,6 +31,36 @@ export const saveDataToExel = async (date,
   })
 
 }
+export const saveToExelArr = async (arr, exelSheet) => {
+  const data = arr.map((item) => {
+    const {
+      createdAt, chatId, telegramName, userName, ref, commandName, registrationType,
+      ip, city, region, country, phone, name, steamName, rating
+    } = item
+
+
+    return [createdAt, name, phone, chatId, telegramName, userName, ref, commandName,rating,
+      registrationType, steamName, ip, city, region, country,]
+  })
+  data.unshift(["дата", "имя", "телефон", "ид чата", "имя в телеге","ссылка на телегу", "реф",
+    "имя команды", "рейтинг","тип регистрации", "имя в стиме", "ип", "город", "регион", "страна"])
+  await googleSheets.spreadsheets.values.clear({
+    auth,
+    spreadsheetId,
+    range: `${exelSheet}!A1:O5000`,
+  })
+
+  await googleSheets.spreadsheets.values.append({
+    auth,
+    spreadsheetId,
+    range: `${exelSheet}!A:O`,
+    valueInputOption: "RAW",
+    resource: {
+      values: data,
+    }
+  });
+
+}
 
 export const getDataFromExel = async (exelSheet) => {
   const getRows = await googleSheets.spreadsheets.values.get({

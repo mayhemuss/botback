@@ -14,6 +14,8 @@ import {userids} from "../userids.js";
 import {textCommandCheck} from "../scenarios/textCommandCheck.js";
 import {bot} from "../index.js";
 import {getDataFromExel} from "../services/exelData.js";
+import DisciplineService from "../services/DisciplineService.js";
+import UserRegService from "../services/UserRegService.js";
 
 export const msgTextHandler = async (msg) => {
   const chatId = msg.chat.id;
@@ -58,6 +60,7 @@ export const msgTextHandler = async (msg) => {
       const decodedText = decodeText(codedText)
       messageToSave.codedText = codedText
       messageToSave.decodedText = decodedText
+      console.log(decodedText)
 
       const [capId, anonced, dateEnd] = decodedText.split("_")
 
@@ -97,11 +100,18 @@ export const msgTextHandler = async (msg) => {
           ), chatId)
         }
 
+        const disciplineId = await DisciplineService.createOrGet(games[0].callData, games[0].gameName, games[0].type, games[0].dateEnd)
+        const command = await UserRegService.getCommand(disciplineId, capId)
+
         if (type === "game") {
 
           //обработка реферальной ссылки по игре
-          const {commandName, count} = await getCommandName(registrationSheets, capId)
-          messageToSave.commandName = commandName
+
+
+          const count = command.length
+
+          // const {commandName, count} = await getCommandName(registrationSheets, capId)
+
           messageToSave.count = count
 
           if (count === 0) {
@@ -111,7 +121,7 @@ export const msgTextHandler = async (msg) => {
                 ...messageToSave, answer: `Капитан расформировал команду`
               }), chatId, "bot")
           }
-
+          messageToSave.commandName = commandName
 
           if (count >= commandMemberCount) {
             await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
@@ -151,8 +161,12 @@ export const msgTextHandler = async (msg) => {
 
         if (type === "lottery") {
 
+          const members = command.filter(member => {
+            return member.ref !== member.chatId
+          })
+
           //обработка реферальной ссылки с розыгрышем
-          const {count} = await getCommandName(registrationSheets, capId)
+          const count = members.length
 
           messageToSave.count = count
 
