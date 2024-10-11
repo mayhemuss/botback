@@ -110,11 +110,15 @@ export const msgTextHandler = async (msg) => {
 
           const count = command.length
 
+          if(count === 0){return}
+
           // const {commandName, count} = await getCommandName(registrationSheets, capId)
 
           messageToSave.count = count
+          const     commandName = command[0].commandName
 
           if (count === 0) {
+
             await bot.sendMessage(chatId, `Капитан расформировал команду`)
             return await saveMessages(JSON.stringify(
               {
@@ -124,6 +128,7 @@ export const msgTextHandler = async (msg) => {
           messageToSave.commandName = commandName
 
           if (count >= commandMemberCount) {
+
             await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
             return await saveMessages(JSON.stringify(
               {
