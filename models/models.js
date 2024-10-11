@@ -13,8 +13,8 @@ const Discipline = db.define('discipline', {
 const UserReg = db.define('user', {
   id: {type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
   chatId: {type: DataTypes.BIGINT, allowNull: false},
-  telegramName: {type: DataTypes.STRING,},
-  userName: {type: DataTypes.STRING},
+  telegramName: {type: DataTypes.TEXT,},
+  userName: {type: DataTypes.TEXT},
   ref: {type: DataTypes.BIGINT, allowNull: false},
   commandName: {type: DataTypes.STRING},
   registrationType: {type: DataTypes.STRING},
