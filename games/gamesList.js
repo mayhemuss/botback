@@ -1,21 +1,22 @@
 import {texts} from "../text.js";
 
 export const gamesList = [
+
   {
-    gameName: "Mobile Legends: Bang Bang",
-    dateStart: +(new Date(2024, 8, 28, 8 - 3,)),
-    dateEnd: +(new Date(2024, 8, 28, 23 - 3, 59)),
-    descriptions: `Новый турнир по Mobile Legends: Bang Bang, для входа на мероприятие необходимо зарегистрироваться!` ,
-    registrationSheets: "mlbbreg_28_09_24",
-    imageUrl: "https://sun9-77.userapi.com/impg/nj1LOFCZglqQl-WeuM25dhMMLKSBjhIIbffoLQ/fZ28S7WOlzs.jpg?size=1280x720&quality=95&sign=111e73b0177d01b2fe2ef52493a831b2&type=album",
-    reglaments: "Доброго времени суток, вы попали в раздел \"Регламент\"\n" +
-      "Для прохода на территорию ивента пройдите регистрацию в телеграм боте SkyNet GAMES \n" +
-      "При отсутствии регистрации администрация мероприятия в праве не допустить вас на территорию.",
-    commandMemberCount: 1,
-        webAppUrl: "https://skynetgamesbot.ru/game",
-    anonced: "mlbb",
-        type: "game"
+    gameName: "Counter-Strike 2",
+    dateStart: +(new Date(2024, 10 - 1, 11, 16 - 3,55)),
+    dateEnd: +(new Date(2024, 11 - 1, 1, 23 - 3, 59)),
+    descriptions: "Регистрация на новый турнир по Counter-Strike 2, Выбери как зарегистрироваться, " +
+      "как капитан команды или как член команды?",
+    registrationSheets: "cs_03_11_24",
+    imageUrl: "https://sun9-77.userapi.com/impg/CyQywdt9M-WQB4ZrFG4OmZwO2p44uFmklZRs3w/eBn7jNz5__8.jpg?size=1920x1080&quality=95&sign=35e195be07bf311a793ea6a214ad8e4c&type=album",
+    reglaments: "С Регламентом турнира по Counter-Strike 2 можно ознакомится по данной ссылке: https://clck.ru/3Dq7hp \n \n" + texts.capitanReg +
+      "\n \nДля подтверждения участия мы позвоним вашему капитану за 2-3 дня до кибер-турнира. Удачи на SkyNet GAMES!",
+
+    commandMemberCount: 5,
+    webAppUrl: "https://skynetgamesbot.ru/game",
+    anoncedPost: "https://t.me/games_skynet/482",
+    anonced: "cs",
+    type: "game"
   },
-
-
 ]

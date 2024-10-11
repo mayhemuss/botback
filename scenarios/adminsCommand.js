@@ -87,32 +87,32 @@ export const adminsCommand = {
     }
   },
 
-  // "/admin": {
-  //   callBack: async (chatId, text) => {
-  //     await bot.sendMessage(chatId, "вот команды админа для тебя:\n" +
-  //       "/logs - сохранение в таблицу всех логов\n" +
-  //       "/tables - сохранение всех регистраций в гугл таблицу\n" +
-  //       "/message - через пробел после этого необходимо добавить ид человека и через _ добавить текст сообщения")
-  //     const disciplines = await DisciplineService.getAll()
-  //
-  //     const inline_keyboard = disciplines.map(dis => {
-  //       return [{
-  //         text: dis.name,
-  //         callback_data: "admin_" + dis.callData
-  //       }]
-  //     })
-  //
-  //
-  //     const form = {
-  //       reply_markup: {
-  //         inline_keyboard
-  //       }
-  //     }
-  //
-  //
-  //     await bot.sendMessage(chatId, "меню управления админа", form)
-  //     return "меню управления админа"
-  //   }
-  // }
+  "/admin": {
+    callBack: async (chatId, text) => {
+      await bot.sendMessage(chatId, "вот команды админа для тебя:\n" +
+        "/logs - сохранение в таблицу всех логов\n" +
+        "/tables - сохранение всех регистраций в гугл таблицу\n" +
+        "/message - через пробел после этого необходимо добавить ид человека и через _ добавить текст сообщения")
+      // const disciplines = await DisciplineService.getAll()
+      //
+      // const inline_keyboard = disciplines.map(dis => {
+      //   return [{
+      //     text: dis.name,
+      //     callback_data: "admin_" + dis.callData
+      //   }]
+      // })
+      //
+      //
+      // const form = {
+      //   reply_markup: {
+      //     inline_keyboard
+      //   }
+      // }
+      //
+      //
+      // await bot.sendMessage(chatId, "меню управления админа", form)
+      return "меню управления админа"
+    }
+  }
 
 }
