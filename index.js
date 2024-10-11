@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import {API_URL, TelegramToken} from "./tokens/token.js";
-import {ADMINs_ID, BACK_URL, PORT} from "./tokens/url.js";
+import {ADMIN_ID, ADMINs_ID, BACK_URL, PORT} from "./tokens/url.js";
 import {commands} from "./text.js";
 import {msgCallbackQueryHandler} from "./functions/msgCallbackQueryHandler.js";
 import {msgTextHandler} from "./functions/msgTextHandler.js";
@@ -12,6 +12,10 @@ import newRouter from "./newRouter.js";
 import {adminsCommandCheck} from "./functions/textCheck.js";
 import {adminsCommand} from "./scenarios/adminsCommand.js";
 import {saveMessages} from "./services/saveMessages.js";
+import {gamesList} from "./games/gamesList.js";
+import UserRegService from "./services/UserRegService.js";
+import DisciplineService from "./services/DisciplineService.js";
+import {saveToExelArr} from "./services/exelData.js";
 
 
 dotenv.config();
@@ -68,6 +72,62 @@ const start = async () => {
     }
     await msgCallbackQueryHandler(msg)
   })
+  setInterval(async ()=>{
+
+      const games = await DisciplineService.getAll()
+      const users = await UserRegService.getAll()
+
+
+      for (let game of gamesList) {
+
+        const callData = game.anonced + "_" + game.dateEnd
+        const {registrationSheets, lotterySheets, type} = game
+        const disciplineId = games.filter(dis => {
+
+          return dis.callData === callData
+        })[0]?.id
+
+        const currentUsers = users.filter(user => {
+          return user.disciplineId === disciplineId
+        })
+
+        try {
+          if (type === "game" && currentUsers.length > 0) {
+            await saveToExelArr(currentUsers, registrationSheets)
+          }
+          if (type === "lottery" && currentUsers.length > 0) {
+            const regNotDone = []
+            const regDone = []
+
+            currentUsers.forEach(user => {
+              if (user.lotteryRegFull === true) {
+                regDone.push(user)
+              } else {
+                regNotDone.push(user)
+              }
+
+            })
+            await saveToExelArr(regNotDone, registrationSheets)
+            await saveToExelArr(regDone, lotterySheets)
+          }
+        } catch (e) {
+          if (type === "lottery") {
+            await bot.sendMessage(ADMIN_ID, `проверь, существует ли страница в таблице ${registrationSheets} и ${lotterySheets}`)
+            await saveMessages(JSON.stringify(e), ADMIN_ID)
+          }
+          if (type === "game") {
+            await bot.sendMessage(ADMIN_ID, `проверь, существует ли страница в таблице ${registrationSheets}`)
+
+            await saveMessages(JSON.stringify(e), ADMIN_ID)
+          }
+          console.log(e)
+        }
+      }
+
+    await bot.sendMessage(ADMIN_ID, `ВСЕ ПО ТАБЛИЦАМ`)
+
+  }, 1000*60*60*6)
+
 }
 
 
