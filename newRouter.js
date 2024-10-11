@@ -8,6 +8,7 @@ import UserRegService from "./services/UserRegService.js";
 import UserController from "./UserController.js";
 import {texts} from "./text.js";
 import DisciplineService from "./services/DisciplineService.js";
+import e from "express";
 
 
 const newRouter = new Router();
@@ -144,7 +145,7 @@ newRouter.post("/regis",
                     console.log(e)
                   }
                 }
-
+                await saveMessages(JSON.stringify({command: [...commandIds, chatId], answer: "Команда собралась"}), chatId, "bot")
               }
 
               //если команда набрана
