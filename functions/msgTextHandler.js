@@ -110,12 +110,11 @@ export const msgTextHandler = async (msg) => {
 
           const count = command.length
 
-          if(count === 0){return}
 
           // const {commandName, count} = await getCommandName(registrationSheets, capId)
 
           messageToSave.count = count
-          const     commandName = command[0].commandName
+
 
           if (count === 0) {
 
@@ -125,6 +124,7 @@ export const msgTextHandler = async (msg) => {
                 ...messageToSave, answer: `Капитан расформировал команду`
               }), chatId, "bot")
           }
+          const commandName = command[0].commandName
           messageToSave.commandName = commandName
 
           if (count >= commandMemberCount) {
@@ -228,8 +228,8 @@ export const msgTextHandler = async (msg) => {
     console.log(error)
     await bot.sendMessage(chatId, texts.allBad)
     await bot.sendMessage(ADMIN_ID,
-      JSON.stringify({error}) + ` что то пошло не так у ${chatId}`)
-    await saveMessages(texts.allBad, chatId, "bot")
+      JSON.stringify(error) + ` что то пошло не так у ${chatId}`)
+    await saveMessages(JSON.stringify(error), chatId, "bot")
   }
 }
 
