@@ -58,6 +58,6 @@ export const savetoEXEL = async (chatId = ADMIN_ID) => {
     }
   }
 
-  await bot.sendMessage(chatId, `ВСЕ ПО ТАБЛИЦАМ`)
+  // await bot.sendMessage(chatId, `ВСЕ ПО ТАБЛИЦАМ`)
 
 }
