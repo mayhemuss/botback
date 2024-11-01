@@ -5,6 +5,7 @@ import {timeCheck} from "../functions/timeCheck.js";
 import {gamesList} from "../games/gamesList.js";
 import {startMessage} from "../functions/startMessage.js";
 import {bot} from "../index.js";
+import {saveMessages} from "../services/saveMessages.js";
 
 
 export const textCommandCheck = async (text, chatId, messageToSave) => {
@@ -15,7 +16,13 @@ export const textCommandCheck = async (text, chatId, messageToSave) => {
       for (let game of anoncedGames) {
         if (text && textCheck(text, gameVariantsText[game.anonced])) {
           await bot.sendMessage(chatId, "Мероприятие уже анонсировано, пройдите регистрацию")
-          return await startMessage(chatId)
+           await startMessage(chatId)
+          return  await  saveMessages(JSON.stringify(
+            {
+              ...messageToSave,
+              answer: "Мероприятие уже анонсировано, пройдите регистрацию"
+            }
+          ), chatId)
         }
       }
     }
@@ -25,18 +32,48 @@ export const textCommandCheck = async (text, chatId, messageToSave) => {
 
 
   if (text && textCheck(text, gameVariantsText.valorant)) {
-    return gamesValorant(chatId)
+    await gamesValorant(chatId)
+    return  await  saveMessages(JSON.stringify(
+      {
+        ...messageToSave,
+        answer: "скоро будет"
+      }
+    ), chatId)
   }
   if (text && textCheck(text, gameVariantsText.dota)) {
-    return gamesDota(chatId)
+    await gamesDota(chatId)
+    return  await  saveMessages(JSON.stringify(
+      {
+        ...messageToSave,
+        answer: "скоро будет"
+      }
+    ), chatId)
   }
   if (text && textCheck(text, gameVariantsText.mlbb)) {
-    return gamesMlbb(chatId)
+    await gamesMlbb(chatId)
+    return  await  saveMessages(JSON.stringify(
+      {
+        ...messageToSave,
+        answer: "скоро будет"
+      }
+    ), chatId)
   }
   if (text && textCheck(text, gameVariantsText.cs)) {
-    return gamesCs(chatId)
+    await gamesCs(chatId)
+    return  await  saveMessages(JSON.stringify(
+      {
+        ...messageToSave,
+        answer: "скоро будет"
+      }
+    ), chatId)
   }
 //не опознанный текст
-  return nothingGames(chatId)
+  await nothingGames(chatId)
+  return  await  saveMessages(JSON.stringify(
+    {
+      ...messageToSave,
+      answer: "непонятный текст"
+    }
+  ), chatId)
 }
 

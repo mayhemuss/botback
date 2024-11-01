@@ -3,7 +3,7 @@ import express from "express";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import {API_URL, TelegramToken} from "./tokens/token.js";
-import {ADMIN_ID, ADMINs_ID, BACK_URL, PORT} from "./tokens/url.js";
+import { ADMINs_ID, BACK_URL, PORT} from "./tokens/url.js";
 import {commands} from "./text.js";
 import {msgCallbackQueryHandler} from "./functions/msgCallbackQueryHandler.js";
 import {msgTextHandler} from "./functions/msgTextHandler.js";
@@ -12,11 +12,6 @@ import newRouter from "./newRouter.js";
 import {adminsCommandCheck} from "./functions/textCheck.js";
 import {adminsCommand} from "./scenarios/adminsCommand.js";
 import {saveMessages} from "./services/saveMessages.js";
-import {gamesList} from "./games/gamesList.js";
-import UserRegService from "./services/UserRegService.js";
-import DisciplineService from "./services/DisciplineService.js";
-import {saveToExelArr} from "./services/exelData.js";
-import {savetoEXEL} from "./services/savetoEXEL.js";
 
 
 dotenv.config();
@@ -25,6 +20,7 @@ export const bot = new TelegramBot(TelegramToken, {polling: true});
 
 //настройки бэка
 const app = express();
+app.set('trust proxy', true);
 app.use(cors());
 app.use(express.json({limit: '70mb'}));
 app.use(API_URL, newRouter)
@@ -73,7 +69,9 @@ const start = async () => {
     }
     await msgCallbackQueryHandler(msg)
   })
-  setInterval(async ()=> savetoEXEL(), 1000*60*60)
+
+
+   setInterval(async ()=> savetoEXEL(), 1000*60*5)
 
 }
 
