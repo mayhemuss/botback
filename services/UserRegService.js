@@ -63,6 +63,12 @@ class UserRegService {
     return users
   }
 
+  async getCommandName(disciplineId, ref){
+    const commandcapitan = await UserReg.findOne({where:{
+        disciplineId, chatId: ref
+      }})
+  }
+
   async getDisciplines(disciplineId) {
     const users = await UserReg.findAll({where: {disciplineId}})
     if (users.length === 0) {

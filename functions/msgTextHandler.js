@@ -16,6 +16,7 @@ import {bot} from "../index.js";
 import {getDataFromExel} from "../services/exelData.js";
 import DisciplineService from "../services/DisciplineService.js";
 import UserRegService from "../services/UserRegService.js";
+import {chat} from "googleapis/build/src/apis/chat/index.js";
 
 export const msgTextHandler = async (msg) => {
   const chatId = msg.chat.id;
@@ -100,7 +101,8 @@ export const msgTextHandler = async (msg) => {
           ), chatId)
         }
 
-        const disciplineId = await DisciplineService.createOrGet(games[0].callData, games[0].gameName, games[0].type, games[0].dateEnd)
+        const disciplineId = await DisciplineService
+          .createOrGet(games[0].callData, games[0].gameName, games[0].type, games[0].dateEnd)
         const command = await UserRegService.getCommand(disciplineId, capId)
 
         if (type === "game") {
@@ -127,7 +129,9 @@ export const msgTextHandler = async (msg) => {
           const commandName = command[0].commandName
           messageToSave.commandName = commandName
 
-          if (count >= commandMemberCount) {
+          console.log(!command.map(member=>+member.chatId).includes(chatId))
+
+          if (count >= commandMemberCount && !command.map(member=>+member.chatId).includes(chatId)) {
 
             await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
             return await saveMessages(JSON.stringify(
@@ -136,13 +140,10 @@ export const msgTextHandler = async (msg) => {
               }), chatId, "bot")
           }
 
-          const {lenght, query} = rawQueryToString(
+          const query = rawQueryToString(
             {
-              commandName,
               callData: `${anonced}_${dateEnd}`,
               ref: capId,
-              commandMemberCount,
-              regText: "Зарегистрироваться",
             }
           )
 
@@ -198,12 +199,10 @@ export const msgTextHandler = async (msg) => {
               //человек не был подписан
             } else {
 
-              const {lenght, query} = rawQueryToString(
+              const query = rawQueryToString(
                 {
                   callData: `${anonced}_${dateEnd}`,
                   ref: capId,
-                  commandMemberCount,
-                  regText: "Зарегистрироваться",
                 }
               )
 

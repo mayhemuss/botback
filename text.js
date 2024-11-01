@@ -167,7 +167,7 @@ export const commands = [
 
 export const smallTeam = (gameName, prevMenu, regText, rawQuery, webAppUrl, callData) => {
 
-  const {query, lenght} = rawQueryToString(rawQuery)
+  const query = rawQueryToString(rawQuery)
 
   return [
     [{
@@ -177,7 +177,7 @@ export const smallTeam = (gameName, prevMenu, regText, rawQuery, webAppUrl, call
     [{
       text: regText,
       web_app: {
-        url: `${webAppUrl}${lenght}${query}`,
+        url: `${webAppUrl}?${query}`,
         data: regText
       }
     }],
@@ -208,6 +208,10 @@ export const bigTeam = (gameName, prevMenu, callData) => {
       text: `У меня нет команды 😢`,
       callback_data: callData + "_noComand",
 
+    }],
+      [{
+      text: "Проблемы с регистрацией",
+      callback_data: callData + "_problems"
     }]
     ,
     [{
@@ -221,7 +225,7 @@ export const lottery = async (gameName, prevMenu, callData, webAppUrl, rawQuery,
   const disciplineId = await DisciplineService.createOrGet(callData, gameName, "lottery", callData.split("_")[1])
   const user = await UserRegService.getUser(disciplineId, chatId)
   const regText = user ? "Изменить данные" : `Получить реферальную ссылку`
-  const {query, lenght} = rawQueryToString({...rawQuery, regText})
+  const query = rawQueryToString(rawQuery)
 
   return  [
     [{
@@ -231,7 +235,7 @@ export const lottery = async (gameName, prevMenu, callData, webAppUrl, rawQuery,
     [{
       text: regText,
       web_app: {
-        url: `${webAppUrl}${lenght}${query}`,
+        url: `${webAppUrl}?${query}`,
       }
     }],
     [{
@@ -243,12 +247,12 @@ export const lottery = async (gameName, prevMenu, callData, webAppUrl, rawQuery,
 
 
 export const capitanTeam = (count, commandName, prevMenu, callData, webAppUrl, rawQuery) => {
-  const {lenght, query} = rawQueryToString(rawQuery)
+  const  query = rawQueryToString(rawQuery)
   return [
     [{
       text: "Изменить регистрастрационные данные",
       web_app: {
-        url: `${webAppUrl}${lenght}${query}`,
+        url: `${webAppUrl}?${query}`,
         // url: `${webAppUrl}`,
       }
     }],
@@ -265,13 +269,13 @@ export const capitanTeam = (count, commandName, prevMenu, callData, webAppUrl, r
 
 
 export const capitanRegConfirm = (rawQuery, gameName, callData, regText, webAppUrl, prevMenu) => {
-  const {lenght, query} = rawQueryToString(rawQuery)
+  const  query = rawQueryToString(rawQuery)
 
   return [
     [{
       text: regText,
       web_app: {
-        url: `${webAppUrl}${lenght}${query}&regType=capitan`,
+        url: `${webAppUrl}?${query}&regType=capitan`,
         data: regText
       }
     }],

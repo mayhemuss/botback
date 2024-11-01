@@ -8,20 +8,52 @@ import UserRegService from "./services/UserRegService.js";
 import UserController from "./UserController.js";
 import {texts} from "./text.js";
 import DisciplineService from "./services/DisciplineService.js";
-
+import {userids} from "./userids.js";
 
 
 const newRouter = new Router();
 
 newRouter.post("/type",
   async (req, res) => {
+    const messageToSave = {nginxIp: req.ip}
+    console.log(req.ip)
     try {
+      const {ref, callData, chatId} = req.body;
 
-      console.log("fet")
-      const {id} = req.body;
-      await saveMessages("открыл страницу регистрации", id)
+      const result = {};
+      messageToSave.body = {ref, callData, chatId}
+      const game = timeCheck(gamesList).filter(game => {
+        return game.callData === callData
+      })[0]
 
-      return await res.json({types: "done"})
+      const commandMemberCount = game.commandMemberCount
+
+      result.inAppimageUrl = game.inAppimageUrl
+      result.commandMemberCount = commandMemberCount
+
+      const discipline = await DisciplineService.get(callData)
+      const user = await UserRegService.getUser(discipline.id, chatId)
+
+      if (commandMemberCount > 1 && game.type === "game") {
+
+        if (ref !== chatId && ref !== undefined) {
+          const command = await UserRegService.getCommand(discipline.id, +ref)
+
+          result.commandName = command[0].commandName
+        }
+      }
+      if (game.type === "game") {
+        result.regText = user ? "Изменить данные" : "Зарегистрироваться"
+      } else {
+        result.regText = user ? "Изменить данные" : "Получить реферальную ссылку"
+      }
+
+      messageToSave.result = result
+      res.json(result)
+      return await saveMessages(JSON
+        .stringify({...messageToSave, answer: "открыл страницу регистрации"}), chatId)
+
+
     } catch (e) {
       console.log(e)
       return res.json(e);
@@ -48,7 +80,6 @@ newRouter.post("/regis",
       rating
     } = req.body;
     const chatId = +idchat
-    console.log(req.body)
 
 
     try {
@@ -80,7 +111,7 @@ newRouter.post("/regis",
       } = games[0]
 
       const disciplineId = await DisciplineService.createOrGet(callData, gameName, type, date)
-      console.log(disciplineId)
+
       const responce = await fetch(`https://2domains.ru/api/web-tools/geoip?ip=${ip}`)
       const {city, region, country} = await responce.json()
       const user = await UserRegService.getUser(disciplineId, chatId)
@@ -145,7 +176,10 @@ newRouter.post("/regis",
                     console.log(e)
                   }
                 }
-                await saveMessages(JSON.stringify({command: [...commandIds, chatId], answer: "Команда собралась"}), chatId, "bot")
+                await saveMessages(JSON.stringify({
+                  command: [...commandIds, chatId],
+                  answer: "Команда собралась"
+                }), chatId, "bot")
               }
 
               //если команда набрана
@@ -190,9 +224,9 @@ newRouter.post("/regis",
         }
 
 
-        if (region === "Санкт-Петербург" || city === "Санкт-Петербург" || true) {
+        if (region === "Санкт-Петербург" || city === "Санкт-Петербург" || region === "Ленинградская область") {
 
-          //первичная рега подпивасовода
+          //первичная рега кэпа подпивасов
           if (ref === chatId || ref === "") {
             const newReg = await UserController
               .CreateOrUpdate(user, disciplineId, +chatId, tname, username, ref, commandName, regType, ip, city, region, country, phone, name, false, steamName)
@@ -205,10 +239,27 @@ newRouter.post("/regis",
 
             //регистрация подпиваса
           } else {
+
+            //если пытается зарегаться подпивасом, но уже был подписан
+            if (userids.includes(chatId)) {
+              const newReg = await UserController
+                .CreateOrUpdate(user, disciplineId, +chatId, tname, username, +chatId, commandName, regType, ip, city, region, country, phone, name, false, steamName)
+              if (newReg) {
+                await bot.sendMessage(chatId, texts.loteryMemberInList)
+                await bot.sendMessage(chatId, texts.loteryRegDone(name))
+                await bot.sendMessage(chatId, texts.loteryRefUrl(chatId, callDataInGame))
+              } else {
+                await bot.sendMessage(chatId, `Спасибо за изменение данных, ${name}`)
+              }
+              return await res.json({done: "done"})
+            }
+
             const command = await UserRegService.getCommand(disciplineId, ref)
+
             const beerMember = command.filter(member => {
               return member.chatId !== member.ref
             })
+
             const memberId = beerMember.map(member => member.chatId)
 
             //если подпивасы не набраны

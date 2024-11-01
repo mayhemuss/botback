@@ -2,9 +2,7 @@ import {inlineGameList} from "../games/inlineGameList.js";
 import {gamesList} from "../games/gamesList.js";
 import {bigTeam, capitanRegConfirm, capitanTeam, lottery, sky_logo, smallTeam, texts, userRegConfirm} from "../text.js";
 import {timeCheck} from "./timeCheck.js";
-import {getRegType} from "../services/getRegType.js";
 import {editMessages} from "./editMessages.js";
-import {getCommand} from "../services/getCommand.js";
 import UserRegService from "../services/UserRegService.js";
 import DisciplineService from "../services/DisciplineService.js";
 
@@ -34,6 +32,22 @@ export const gameToObject = (list) => {
 
 
   actualList.forEach(event => {
+
+    obj[event.callData + "_problems"] = {
+      editRegistrationMenu: async (chatId, message_id) => {
+        const inline_keyboard = [
+          [{text: "<<- Назад", callback_data: event.callData}]
+        ]
+
+        const text = "Если у вас возникли проблемы с входом в мини приложение с регистрацией, " +
+          "то скорей всего они связаны с отключенными скриптами в приложении Telegram. Поробуйте " +
+          "открыть бота через WEB версию телеграм: https://web.telegram.org/\n\n" +
+          "Если это не помогло напишите нам в техническую поддержку: https://t.me/Sitnikov_vla"
+
+        return await editMessages(chatId, message_id, inline_keyboard, text)
+      }
+    }
+
     if (event.commandMemberCount > 1 && event.type === "game") {
 
       //регистрация юзера
@@ -41,7 +55,6 @@ export const gameToObject = (list) => {
         editRegistrationMenu: async (chatId, message_id) => {
 
           return await editMessages(chatId, message_id, userRegConfirm(event.callData), texts.userReg)
-
         }
       }
 
@@ -226,7 +239,7 @@ export const gameToObject = (list) => {
         editRegistrationMenu: async (chatId, message_id) => {
           const inline_keyboard = await lottery(event.gameName, "AllGameList", event.callData, event.webAppUrl, {
             callData: event.callData,
-          } , chatId)
+          }, chatId)
 
           return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
 
