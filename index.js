@@ -12,6 +12,7 @@ import newRouter from "./newRouter.js";
 import {adminsCommandCheck} from "./functions/textCheck.js";
 import {adminsCommand} from "./scenarios/adminsCommand.js";
 import {saveMessages} from "./services/saveMessages.js";
+import {savetoEXEL} from "./services/savetoEXEL.js";
 
 
 dotenv.config();
