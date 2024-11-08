@@ -8,8 +8,8 @@ export async function getIpData(ip, retries = 5, delay = 1000) {
       // Если запрос успешен, возвращаем результат
       if (response.status === 200) {
 
-        const ipData = await response.json()
-        return ipData
+        return await response.json()
+
       } else {
         throw new Error(`Ошибка HTTP: ${response.status}`);
       }

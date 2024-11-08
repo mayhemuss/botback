@@ -7,14 +7,14 @@ class UserRegService {
     const {username} = body
     const Tusername = username ? "https://t.me/" + username : ""
 
-    const user = await UserReg.create({
+    await UserReg.create({
       userName: Tusername,
       lotteryRegFull: false,
       disciplineId,
       ...body,
       ...ipData
     })
-    return user
+
   }
 
   async getUser(disciplineId, chatId,) {
@@ -46,8 +46,8 @@ class UserRegService {
   }
 
   async getAll() {
-    const users = await UserReg.findAll()
-    return users
+    return await UserReg.findAll()
+
   }
 
 

@@ -1,7 +1,6 @@
 import {BOT_NAME} from "./tokens/url.js";
 import {rawQueryToString} from "./functions/rawQueryToString.js";
 import {codeText} from "./functions/codeDecode.js";
-import {Discipline} from "./models/models.js";
 import DisciplineService from "./services/DisciplineService.js";
 import UserRegService from "./services/UserRegService.js";
 

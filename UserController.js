@@ -1,5 +1,4 @@
 import UserRegService from "./services/UserRegService.js";
-import {UserReg} from "./models/models.js";
 
 class UserController {
   async CreateOrUpdate(user, disciplineId, ipData, ref, body ) {
