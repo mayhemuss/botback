@@ -3,16 +3,17 @@ import express from "express";
 import cors from "cors";
 import * as dotenv from "dotenv";
 import {API_URL, TelegramToken} from "./tokens/token.js";
-import { ADMINs_ID, BACK_URL, PORT} from "./tokens/url.js";
+import {ADMINs_ID, BACK_URL, PORT} from "./tokens/url.js";
 import {commands} from "./text.js";
 import {msgCallbackQueryHandler} from "./functions/msgCallbackQueryHandler.js";
 import {msgTextHandler} from "./functions/msgTextHandler.js";
 import db from "./db/db.js";
-import newRouter from "./newRouter.js";
+import router from "./routers/router.js";
 import {adminsCommandCheck} from "./functions/textCheck.js";
 import {adminsCommand} from "./scenarios/adminsCommand.js";
 import {saveMessages} from "./services/saveMessages.js";
 import {savetoEXEL} from "./services/savetoEXEL.js";
+import {returnLogs} from "./services/returnLogs.js";
 
 
 dotenv.config();
@@ -21,17 +22,17 @@ export const bot = new TelegramBot(TelegramToken, {polling: true});
 
 //настройки бэка
 const app = express();
-app.set('trust proxy', true);
+app.set('trust proxy', '127.0.0.1');
 app.use(cors());
 app.use(express.json({limit: '70mb'}));
-app.use(API_URL, newRouter)
+app.use(API_URL, router)
 
 const start = async () => {
   //запуск бэка
   try {
     await db.authenticate();
-
     await db.sync();
+    console.log("db start done")
   } catch (e) {
     console.log(e)
   }
@@ -48,6 +49,7 @@ const start = async () => {
 
   //проверка текста
   bot.on('message', async (msg) => {
+
     const chatId = msg.chat.id;
     const text = msg.text;
 
@@ -60,21 +62,19 @@ const start = async () => {
 
     await msgTextHandler(msg)
   })
-  ;
 
   //проверка кнопок
   bot.on("callback_query", async (msg) => {
     const callBackData = msg.data
-    if(callBackData.startsWith("admin")) {
+    if (callBackData.startsWith("admin")) {
       return
     }
     await msgCallbackQueryHandler(msg)
   })
 
-
-   setInterval(async ()=> savetoEXEL(), 1000*60*5)
+  setInterval(async () => savetoEXEL(), 1000 * 60 * 15)
+  setInterval(async () => returnLogs(), 1000 * 60 * 60)
 
 }
-
 
 start()

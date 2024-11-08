@@ -2,7 +2,7 @@ import {Discipline} from "../models/models.js";
 
 class DisciplineService {
   async createOrGet(callData, name, type, date) {
-    console.log(callData)
+
     const candidateDiscipline = await Discipline.findOne({where: {callData}})
     if (!candidateDiscipline) {
       const id = await Discipline.create({
@@ -25,7 +25,9 @@ class DisciplineService {
   }
 
   async get(callData) {
+
     const discipline = await Discipline.findOne({where: {callData}})
+    // console.log(discipline)
     if (discipline) {
       return discipline.dataValues
     }

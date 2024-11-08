@@ -1,10 +1,23 @@
-import {inlineGameList} from "../games/inlineGameList.js";
+
 import {gamesList} from "../games/gamesList.js";
-import {bigTeam, capitanRegConfirm, capitanTeam, lottery, sky_logo, smallTeam, texts, userRegConfirm} from "../text.js";
+import {
+  bigTeam,
+  capitanRegConfirm,
+  capitanTeam,
+  lottery,
+  mixTeam,
+  sky_logo,
+  smallTeam,
+  texts,
+  userRegConfirm
+} from "../text.js";
 import {timeCheck} from "./timeCheck.js";
 import {editMessages} from "./editMessages.js";
 import UserRegService from "../services/UserRegService.js";
 import DisciplineService from "../services/DisciplineService.js";
+import {telegramUrlCheck} from "./telegramUrlCheck.js";
+import {rawQueryToString} from "./rawQueryToString.js";
+import {inlineGameList} from "./startMessage.js";
 
 export const gameToObject = (list) => {
   const actualList = timeCheck(list)
@@ -97,7 +110,6 @@ export const gameToObject = (list) => {
               }])
             }
 
-            console.log("кнопки" + buttons);
             const inline_keyboard = [...buttons, [{
               text: "<<- Назад", callback_data: event.callData + "_capitan"
             }]]
@@ -123,8 +135,7 @@ export const gameToObject = (list) => {
           const type = user?.registrationType
 
 
-          // const command = await getCommand(event.registrationSheets, chatId)
-          // const {type, count, commandName, capitan} = command
+
 
           // console.log(command)
           const regText = type === "noReg" || type === undefined ? "Зарегистрироваться" : "Изменить данные"
@@ -133,30 +144,24 @@ export const gameToObject = (list) => {
             const count = members?.length
             const commandName = members[0]?.commandName
 
-            console.log("capitan")
             const inline_keyboard = capitanTeam(count, commandName, event.callData, event.callData, event.webAppUrl, {
-              regText,
+              ref: chatId,
               callData: event.callData,
-              commandMemberCount: event.commandMemberCount,
-              regType: "capitan",
-              commandName
+
             })
             return await editMessages(chatId, message_id, inline_keyboard, `Уважаемый капитан команды ${commandName}, ` + `здесь вы можете посмотреть список членов команды и в случае необходимости произвести замену участника`)
           }
 
 
           if (type === "noReg" || type === undefined) {
-            console.log("noReg")
             const inline_keyboard = capitanRegConfirm({
-              regText, callData: event.callData, commandMemberCount: event.commandMemberCount,
+              callData: event.callData, ref: chatId
             }, event.gameName, event.callData, regText, event.webAppUrl, event.callData)
 
             return await editMessages(chatId, message_id, inline_keyboard, texts.capitanRegConf)
           }
 
-
           if (type === "user") {
-            console.log("user")
             const members = await UserRegService.getCommand(disciplineId, user.ref)
             const capitan = members.filter(member => {
               return member.registrationType === "capitan"
@@ -219,7 +224,7 @@ export const gameToObject = (list) => {
           const disciplineId = await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
           const user = await UserRegService.getUser(disciplineId, chatId)
 
-          // const {types} = await getRegType(chatId, event.registrationSheets)
+
           const regText = user ? "Изменить данные" : "Зарегистрироваться"
           const regType = "user"
           const inline_keyboard = smallTeam(event.gameName, "AllGameList", regText, {
@@ -238,7 +243,7 @@ export const gameToObject = (list) => {
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
           const inline_keyboard = await lottery(event.gameName, "AllGameList", event.callData, event.webAppUrl, {
-            callData: event.callData,
+            callData: event.callData, ref: chatId
           }, chatId)
 
           return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
@@ -257,8 +262,69 @@ export const gameToObject = (list) => {
         }
       }
     }
+
+    if (event.type === "mix") {
+
+      obj[event.callData] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+           await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
+          const nick = await telegramUrlCheck(chatId)
+          const inline_keyboard = mixTeam(event.gameName, "AllGameList", event.callData, nick)
+          return await editMessages(chatId, message_id, inline_keyboard, texts.mixMenu, event.imageUrl)
+        }
+      }
+
+      obj[event.callData + "_reglament"] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+
+          const inline_keyboard = [[{
+            text: "<<- Назад",
+            callback_data: event.callData
+          }]]
+          return await editMessages(chatId, message_id, inline_keyboard, event.reglaments)
+        }
+      }
+
+
+      obj[event.callData + "_regconf"] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+          const inline_keyboard = [
+            [{
+              text: "✅ Подтвердить",
+              callback_data: event.callData + "_regpage"
+            },
+              {
+                text: "❌ Назад",
+                callback_data: event.callData
+              }]
+          ]
+
+
+          return await editMessages(chatId, message_id, inline_keyboard, 'У вас нету ника в телеграме, для общения с будущим капитаном членом команды' +
+            'мы будем вынуждены передать ваш номер телефона, либо в настройках телеграма сделайте ник и перезапустите бота')
+        }
+      }
+
+      obj[event.callData + "_regpage"] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+          const query = rawQueryToString({ref: chatId, callData: event.callData})
+          const inline_keyboard = [
+            [{
+              text: "Зарегистрироваться",
+              web_app: {
+                url: `${event.webAppUrl}?${query}`
+              }
+            }],
+            [{text:"<<- Назад",
+              callback_data:   event.callData}]
+          ]
+          return await editMessages(chatId, message_id, inline_keyboard, 'страница регистрации на турнир')
+        }
+      }
+
+
+    }
   })
 
-  console.log(JSON.stringify(obj))
   return obj
 }

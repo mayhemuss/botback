@@ -1,14 +1,25 @@
 import {returnLogs} from "../services/returnLogs.js";
 import {bot} from "../index.js";
-import {gamesList} from "../games/gamesList.js";
-import {saveToExelArr} from "../services/exelData.js";
-import DisciplineService from "../services/DisciplineService.js";
-import UserRegService from "../services/UserRegService.js";
-import {saveMessages} from "../services/saveMessages.js";
-import {forms, texts} from "../text.js";
 import {savetoEXEL} from "../services/savetoEXEL.js";
+import {codeText} from "../functions/codeDecode.js";
 
 export const adminsCommand = {
+
+  "/code":{
+    callBack: async(chatId, text)=>{
+      const decodet = text.split(" ")[1]
+      const t = `реферальная ссылка: https://t.me/SkyNetGames_bot?start=${
+        codeText(decodet)}`
+      // const codetText = codeText(text)
+      return await bot.sendMessage(chatId, t);
+    }
+  },
+
+  "/decode":{
+    callBack: async(chatId, text)=>{
+
+    }
+  },
 
   "/logs": {
     callBack: async (chatId, text) => {

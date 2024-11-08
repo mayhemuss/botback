@@ -1,6 +1,3 @@
-
-
-
 export const timeCheck = (list) => {
   return list.filter(event => {
     const now = Date.now()

@@ -28,7 +28,6 @@ export const textCommandCheck = async (text, chatId, messageToSave) => {
     }
   } catch (e) {
   }
-  console.log(anoncedGames)
 
 
   if (text && textCheck(text, gameVariantsText.valorant)) {

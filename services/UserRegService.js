@@ -1,39 +1,35 @@
 import {UserReg} from "../models/models.js";
-import {DataTypes, where} from "sequelize";
 
 class UserRegService {
-  async createUser(disciplineId, chatId, telegramName, userName, ref, commandName, registrationType, ip, city, region, country, phone, name, lotteryRegFull, steamName, rating) {
-    console.log(ref)
+
+  async createUser(disciplineId, body, ipData) {
+
+    const {username} = body
+    const Tusername = username ? "https://t.me/" + username : ""
+
     const user = await UserReg.create({
-      chatId,
-      telegramName,
-      userName,
-      ref,
-      commandName,
-      registrationType,
-      ip,
-      city,
-      region,
-      country,
-      phone,
-      name,
+      userName: Tusername,
+      lotteryRegFull: false,
       disciplineId,
-      lotteryRegFull,
-      steamName,
-      rating
+      ...body,
+      ...ipData
     })
-
     return user
-
   }
 
   async getUser(disciplineId, chatId,) {
-    const user = await UserReg.findOne({
-      where: {
-        chatId, disciplineId
-      }
-    })
+    const user = await UserReg.findOne({where: {chatId, disciplineId}})
     return user?.dataValues
+  }
+
+  async editUser(disciplineId, body, ipData, user) {
+    const {phone, name, rating, steamName, username} = body
+    const Tusername = username ? "https://t.me/" + username : ""
+    await UserReg.update({phone, name, rating, steamName, Tusername, ...ipData}, {where: {id: user.id, disciplineId}})
+  }
+
+  async editLOtteryRegDone(chatId, disciplineId) {
+    await UserReg.update({lotteryRegFull: true}, {where: {chatId, disciplineId}});
   }
 
   async getCommand(disciplineId, ref) {
@@ -45,15 +41,6 @@ class UserRegService {
     })
   }
 
-  async editUser(user, phone, name, disciplineId) {
-    await UserReg.update({phone, name}, {where: {id: user.id, disciplineId}})
-
-  }
-
-  async editLOtteryRegDone(chatId, disciplineId) {
-    await UserReg.update({lotteryRegFull: true}, {where: {chatId, disciplineId}});
-  }
-
   async deleteUserReg(disciplineId, chatId) {
     await UserReg.destroy({where: {disciplineId, chatId}})
   }
@@ -63,21 +50,6 @@ class UserRegService {
     return users
   }
 
-  async getCommandName(disciplineId, ref){
-    const commandcapitan = await UserReg.findOne({where:{
-        disciplineId, chatId: ref
-      }})
-  }
-
-  async getDisciplines(disciplineId) {
-    const users = await UserReg.findAll({where: {disciplineId}})
-    if (users.length === 0) {
-      return []
-    }
-    return users.map(user => {
-      return user.dataValues
-    })
-  }
 
 }
 

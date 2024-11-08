@@ -7,7 +7,6 @@ const Discipline = db.define('discipline', {
   type: {type: DataTypes.STRING, allowNull: false},
   date: {type: DataTypes.STRING, allowNull: false},
   callData: {type: DataTypes.STRING, allowNull: false, unique: true},
-
 });
 
 const UserReg = db.define('user', {
@@ -26,7 +25,8 @@ const UserReg = db.define('user', {
   name: {type: DataTypes.STRING, allowNull: false},
   lotteryRegFull: {type: DataTypes.BOOLEAN},
   steamName: {type: DataTypes.STRING},
-  rating: {type: DataTypes.STRING}
+  rating: {type: DataTypes.STRING},
+  position: {type: DataTypes.STRING || DataTypes.INTEGER},
 })
 
 const Logs = db.define('logs', {
@@ -40,7 +40,5 @@ UserReg.belongsTo(Discipline);
 
 
 export {
-  Discipline,
-  UserReg,
-  Logs
+  Discipline, UserReg, Logs
 };

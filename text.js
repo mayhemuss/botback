@@ -15,6 +15,7 @@ const memberCountWord = {
 }
 
 export const texts = {
+  mixMenu: "Зарегистрируйтесь что бы принять участие в турнире",
   subsribeText: 'Для продолжения работы необходимо подписаться на канал\n' +
     '\n' +
     'https://t.me/games_skynet',
@@ -80,7 +81,7 @@ export const texts = {
   },
   refUrl: (ref, callData, commandName, gameName) => {
     const RawReg = `${ref}_${callData}`
-    console.log(RawReg)
+
     return `Участники команды ${commandName} по ${
       gameName
     }, для регистрации вам необходимо сначала подписаться на канал https://t.me/games_skynet , после чего перейти по реферальной ссылке: ${
@@ -105,7 +106,8 @@ export const forms = {
     }
   },
 
-  lotteryReferalForm: (webAppUrl, query) => {
+  lotteryReferalForm: (webAppUrl, data) => {
+    const query = rawQueryToString(data)
     return {
       reply_markup: {
         inline_keyboard: [
@@ -119,8 +121,8 @@ export const forms = {
     }
   },
 
-  gameReferalForm: (webAppUrl, query) => {
-
+  gameReferalForm: (webAppUrl, data) => {
+    const query = rawQueryToString(data)
     return {
       reply_markup: {
         inline_keyboard: [
@@ -209,7 +211,30 @@ export const bigTeam = (gameName, prevMenu, callData) => {
       callback_data: callData + "_noComand",
 
     }],
-      [{
+    [{
+      text: "Проблемы с регистрацией",
+      callback_data: callData + "_problems"
+    }]
+    ,
+    [{
+      text: "<<- Назад",
+      callback_data: prevMenu
+    }]
+  ]
+}
+
+export const mixTeam = (gameName, prevMenu, callData, nick) => {
+
+  return [
+    [{
+      text: `Регламент ${gameName}`,
+      callback_data: `${callData}_reglament`
+    }],
+    [{
+      text: `Регистрация`,
+      callback_data: `${callData}_${nick? "regpage": "regconf"}`
+    }],
+    [{
       text: "Проблемы с регистрацией",
       callback_data: callData + "_problems"
     }]
@@ -227,7 +252,7 @@ export const lottery = async (gameName, prevMenu, callData, webAppUrl, rawQuery,
   const regText = user ? "Изменить данные" : `Получить реферальную ссылку`
   const query = rawQueryToString(rawQuery)
 
-  return  [
+  return [
     [{
       text: `Регламент ${gameName}`,
       callback_data: `${callData}_reglament`
@@ -247,7 +272,7 @@ export const lottery = async (gameName, prevMenu, callData, webAppUrl, rawQuery,
 
 
 export const capitanTeam = (count, commandName, prevMenu, callData, webAppUrl, rawQuery) => {
-  const  query = rawQueryToString(rawQuery)
+  const query = rawQueryToString(rawQuery)
   return [
     [{
       text: "Изменить регистрастрационные данные",
@@ -269,7 +294,7 @@ export const capitanTeam = (count, commandName, prevMenu, callData, webAppUrl, r
 
 
 export const capitanRegConfirm = (rawQuery, gameName, callData, regText, webAppUrl, prevMenu) => {
-  const  query = rawQueryToString(rawQuery)
+  const query = rawQueryToString(rawQuery)
 
   return [
     [{

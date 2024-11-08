@@ -1,6 +1,5 @@
 import {timeCheck} from "./timeCheck.js";
 import {gamesList} from "../games/gamesList.js";
-import {deleteDatainExel, getDataFromExel} from "../services/exelData.js";
 import {bot} from "../index.js";
 import {saveMessages} from "../services/saveMessages.js";
 import {editMessages} from "./editMessages.js";
@@ -31,29 +30,12 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
     if (currentComand.length === 0) {
       return
     }
-    console.log("command    ", currentComand)
 
-
-    //получение ид таблицы
-    // const registrationSheets = timeCheck(gamesList).filter(game => {
-    //   return game.callData === callData
-    // })[0].registrationSheets
-
-    //получение всех регистраций
-    // const allRow = await getDataFromExel(registrationSheets)
-
-    //получение инициатора удаления
-    // const member = allRow.filter(row => {
-    //   return +row.chatId === +chatId
-    // })[0]
-
-    // messageToSave.deleteMember = member
 
     const initiator = currentComand.filter(member => {
       return +member.chatId === chatId
     })[0]
 
-    console.log("initiator   ",initiator)
 
     //подтверждение удаления
     if (params.conf === "true") {
@@ -64,10 +46,7 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
       //если инициатор капитан
       if (initiator.registrationType === "capitan") {
 
-        //поиск строки с удаляемым
-        // const index = allRow.findIndex(row => {
-        //   return row.chatId === params.id
-        // })
+
 
 
         //если удаляет себя
@@ -77,7 +56,6 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
             return await bot.sendMessage(chatId, "Команда не пуста")
           }
           await UserRegService.deleteUserReg(disciplineId, params.id)
-          // await deleteDatainExel(registrationSheets, index)
           await gameObj[callData].editRegistrationMenu(chatId, message_id)
           await bot.sendMessage(chatId, "Команда успешно расформирована")
           return await saveMessages(JSON.stringify({...messageToSave, answer: `расформировал команду`}))
@@ -86,7 +64,6 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
         } else {
           await UserRegService.deleteUserReg(disciplineId, params.id)
 
-          // await deleteDatainExel(registrationSheets, index)
           await gameObj[callData + "_comand"].editRegistrationMenu(chatId, message_id)
           await bot.sendMessage(params.id, "Капитан команды удалил вас из команды")
           return bot.sendMessage(chatId, "Участник успешно удален из команды")
@@ -103,12 +80,8 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
 
       //согласование удаления
     } else {
-      console.log("initiator    ",initiator)
 
-      //получение списка команды
-      // const currentComand = allRow.filter(row => {
-      //   return +row.ref === +chatId
-      // })
+
 
       // если пытается удалить капитана и команду
       if (+params.id === +chatId) {
@@ -126,15 +99,14 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
         return +params.id === +member.chatId
       })[0]
 
-      console.log("deletedMember",deletedMember)
-      const memberInfo = deletedMember.username ? deletedMember.username : deletedMember.telegramName
+            const memberInfo = deletedMember.username ? deletedMember.username : deletedMember.telegramName
 
       const quer = {
         id: +params.id,
         conf: true,
 
       }
-      console.log("quer    ",quer)
+
       const inline_keyboard = [[
         {
           text: "✅ Подтвердить",

@@ -6,9 +6,6 @@ import {gameToObject} from "./gameToObject.js";
 import {gamesList} from "../games/gamesList.js";
 import {bot} from "../index.js";
 import {ADMIN_ID} from "../tokens/url.js";
-import {deleteDatainExel, getDataFromExel} from "../services/exelData.js";
-import {timeCheck} from "./timeCheck.js";
-import {editMessages} from "./editMessages.js";
 import {deleteMemberFromTeam} from "./deleteMemberFromTeam.js";
 
 export const msgCallbackQueryHandler = async (msg) => {

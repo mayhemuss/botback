@@ -18,7 +18,9 @@ const variants = [
   "/logs",
   "/message",
   '/tables',
-  "/admin"
+  "/admin",
+  "/code",
+  "/decode"
 ]
 
 export const adminsCommandCheck = (text) => {

@@ -1,19 +1,21 @@
 import UserRegService from "./services/UserRegService.js";
+import {UserReg} from "./models/models.js";
 
 class UserController {
-  async CreateOrUpdate(user, disciplineId, chatId, tname, username, ref, commandName, regType, ip, city, region, country, phone, name, lotteryRegFull, steamName, rating) {
-    console.log("ref   " + ref)
+  async CreateOrUpdate(user, disciplineId, ipData, ref, body ) {
+
     if (!user) {
-      const Tusername = username ? "https://t.me/" + username : ""
-      await UserRegService.createUser(disciplineId, chatId, tname, Tusername, ref === undefined || ref === "" ? chatId : +ref, commandName, regType, ip, city, region, country, phone, name, lotteryRegFull, steamName, rating)
+
+      await UserRegService.createUser(disciplineId, body, ipData)
       return true
     } else {
-      await UserRegService.editUser(user, phone, name, disciplineId)
+      await UserRegService.editUser(disciplineId, body, ipData, user)
       return false
     }
   }
 
-  async toggleRegDone(id) {
+  async editLOtteryRegDone(chatId, disciplineId) {
+    await UserRegService.editLOtteryRegDone(chatId, disciplineId);
   }
 }
 
