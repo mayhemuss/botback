@@ -14,8 +14,8 @@ export const gamesList = [
     reglaments: "С Регламентом турнира по Counter-Strike 2 \"2x2\" можно ознакомится по данной ссылке: https://clck.ru/3ELvYb \n \n" + texts.capitanReg +
       "\n \nДля подтверждения участия мы позвоним вашему капитану за 2-3 дня до кибер-турнира. Удачи на SkyNet GAMES!",
     commandMemberCount: 2,
-    // webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
-    webAppUrl: "https://skynetgamesbot.ru/game",
+    webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
+    // webAppUrl: "https://skynetgamesbot.ru/game",
     anoncedPost: "https://t.me/games_skynet/486",
     anonced: "cs",
     type: "game",
@@ -43,5 +43,68 @@ export const gamesList = [
       }
     ]
   },
+  // {
+  //   gameName: "Iphone",
+  //   dateStart: +(new Date(2024, 7, 15, 15 - 3,)),
+  //   dateEnd: +(new Date(2024, 12 - 1, 30, 13 - 3,)),
+  //   descriptions: 'Пригласи трех друзей, которые небыли подписаны на SkyNet Games и получи шанс выйграть айфон',
+  //   registrationSheets: "сделали_ссылку_айфон30_09_24",
+  //   lotterySheets: "участники_розыгрыша_айфон30_09_24",
+  //   imageUrl: "https://3dnews.ru/assets/external/illustrations/2023/09/19/1093280/iPhone15_02.jpg",
+  //   inAppimageUrl: "https://hetamobiler.se/wp-content/uploads/2012/09/vit-iphone5.jpg",
+  //   reglaments: `Гога тут щас напишет невьебаться какой текст с регламентом конкурса на айфоны`,
+  //   commandMemberCount: 3,
+  //   // webAppUrl: "https://frontdev.mayhemus.keenetic.pro/lottery",
+  //   // webAppUrl: "https://skynetgamesbot.ru/lottery",
+  //
+  //   webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
+  //   anonced: "iphone",
+  //   anoncedPost: "https://t.me/games_skynet/",
+  //   type: "lottery",
+  //   fields: [
+  //     {
+  //       textType: "textarea",
+  //       placeholder: "имя в стиме",
+  //       name: "steamName",
+  //       title: "имя в стиме: ",
+  //       minCheck: 1,
+  //       maxCheck: 40,
+  //       validator: "",
+  //       isBeDisable: true
+  //
+  //     },
+  //   ]
+  // },
+  // {
+  //   gameName: "Counter-Strike 2 MiX",
+  //   dateStart: +(new Date(2024, 11 - 1, 1, 17 - 3, 25)),
+  //   dateEnd: +(new Date(2025, 1 - 1, 15, 23 - 3, 59)),
+  //   descriptions: "Регистрация на новый турнир по Counter-Strike 2 MiX, Выбери как зарегистрироваться, " +
+  //     "пройдите регистрацию, после чего система выберет вам членов команды в зависимости от их рейтинга",
+  //   registrationSheets: "cs_15_12_24",
+  //   imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQCbxlZiMB6tkxLTfDqnvuku4m0-f-7kkPQgA&s",
+  //   inAppimageUrl: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f2/CS2_Cover_Art.jpg/220px-CS2_Cover_Art.jpg",
+  //   reglaments: "С Регламентом турнира по Counter-Strike 2 MiX можно ознакомится по данной ссылке: https://google.com/",
+  //   commandMemberCount: 5,
+  //   webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
+  //   // webAppUrl: "https://skynetgamesbot.ru/game",
+  //   anoncedPost: "https://t.me/games_skynet/1",
+  //   anonced: "cs",
+  //   type: "mix",
+  //
+  //   fields: [
+  //
+  //     {
+  //       textType: "textarea",
+  //       placeholder: "Ваш рейтинг",
+  //       name: "rating",
+  //       title: "Ваш рейтинг в игре:",
+  //       minCheck: 3,
+  //       maxCheck: 10,
+  //       validator: "^[а-яА-Яa-zA-Z\\d \\s]+$",
+  //       isBeDisable: false
+  //     }
+  //   ]
+  // }
 
 ]

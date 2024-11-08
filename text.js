@@ -299,7 +299,7 @@ export const capitanRegConfirm = (rawQuery, gameName, callData, regText, webAppU
     [{
       text: regText,
       web_app: {
-        url: `${webAppUrl}?${query}&regType=capitan`,
+        url: `${webAppUrl}?${query}`,
         data: regText
       }
     }],

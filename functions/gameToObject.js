@@ -226,9 +226,9 @@ export const gameToObject = (list) => {
 
 
           const regText = user ? "Изменить данные" : "Зарегистрироваться"
-          const regType = "user"
+
           const inline_keyboard = smallTeam(event.gameName, "AllGameList", regText, {
-            regText, callData: event.callData, commandMemberCount: event.commandMemberCount, ref: "", regType
+             callData: event.callData,  ref: chatId,
           }, event.webAppUrl, event.callData)
 
           return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
