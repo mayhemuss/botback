@@ -4,6 +4,7 @@ import {logsSheets, spreadsheetId} from "../tokens/token.js";
 
 export const returnLogs = async () => {
   const AllLogs = await Logs.findAll()
+
   const logArr = AllLogs.map(log => {
     const {createdAt, body, chatId} = log
     return [body, chatId, createdAt];
@@ -18,12 +19,14 @@ export const returnLogs = async () => {
       values: logArr,
     }
   })
+
   await Logs.destroy({
     where: {
       id: AllLogs.map(log => {
         return log.id
       })
     }
-  });
+  })
+
   return `логи сохранены в https://docs.google.com/spreadsheets/d/${spreadsheetId}/`
 }
