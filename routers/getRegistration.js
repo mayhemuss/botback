@@ -47,6 +47,10 @@ export const getRegistration = async (req, res) => {
     const user = await UserRegService.getUser(disciplineId, chatId)
 
     //регистрация на игры
+    // if ((ref === -1 || ref === "-1") && type === "game") {
+    //
+    // }
+
     if (type === "game") {
       await registrationGame(chatId, user, disciplineId, ipData, ref, req.body, game, ip)
     }

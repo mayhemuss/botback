@@ -11,7 +11,7 @@ export const registrationLottery = async (chatId, user, disciplineId, ipData, re
   const {city, region,} = ipData
   const {name} = body
   const {callData, commandMemberCount} = game
-  const messageToSave = {body, ip, ipData}
+  const messageToSave = {body, ip, ipData};
 
   if (regions.includes(region) || regions.includes(city)) {
 
@@ -61,7 +61,7 @@ export const registrationLottery = async (chatId, user, disciplineId, ipData, re
 
 
         //если подпивасы не набраны
-        if (beerMember.length < commandMemberCount || beerMemberId.includes(+chatId)) {
+        if (beerMember.length < 10 || beerMemberId.includes(+chatId)) {
           const newReg = await UserController
             .CreateOrUpdate(user, disciplineId, ipData, ref, body)
           //новая регистрация

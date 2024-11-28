@@ -14,6 +14,8 @@ export const msgCallbackQueryHandler = async (msg) => {
   const callBackData = msg.data
   const user = msg.from
 
+  console.log(callBackData)
+
   const messageToSave = {user, callBackData}
 
   //проверка подписки

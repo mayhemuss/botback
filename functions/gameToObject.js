@@ -1,10 +1,9 @@
-
 import {gamesList} from "../games/gamesList.js";
 import {
   bigTeam,
   capitanRegConfirm,
   capitanTeam,
-  lottery,
+  lottery, mixRegMenu,
   mixTeam,
   sky_logo,
   smallTeam,
@@ -62,6 +61,23 @@ export const gameToObject = (list) => {
     }
 
     if (event.commandMemberCount > 1 && event.type === "game") {
+
+      //регистрация миксов
+      obj[event.callData + "_mix"] = {
+        editRegistrationMenu: async (chatId, message_id) => {
+          const discipline = await DisciplineService.get(event.callData)
+          const user = discipline ? await UserRegService.getUser(discipline.id, chatId) : null
+          return await editMessages(
+            chatId,
+            message_id,
+            mixRegMenu({
+              ref: -1,
+              callData: event.callData
+            }, user ? "Изменить данные" : "Зарегистрироваться", event.webAppUrl, event.callData),
+            "Если у вас нет команды, вы можете зарегистрироваться Solo игроком, мы с радостью поможем собрать вам Dream-Team."
+          )
+        }
+      }
 
       //регистрация юзера
       obj[event.callData + "_user"] = {
@@ -130,11 +146,27 @@ export const gameToObject = (list) => {
       //регистрация капитана
       obj[event.callData + "_capitan"] = {
         editRegistrationMenu: async (chatId, message_id) => {
+
           const disciplineId = await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
           const user = await UserRegService.getUser(disciplineId, chatId)
           const type = user?.registrationType
+          const ref = user?.ref
+          console.log(user)
 
 
+          if (ref === -1 || ref === "-1") {
+            const text = "Вы уже были зарегистрированы в MiX режиме."
+
+            const inline_keyboard = [
+              [{
+                text: "удалить регистрацию?", callback_data: `delete?id=${chatId}&type=mix&conf=false#${event.callData}`
+              }],
+              [{
+                text: "<<- Назад", callback_data: event.callData
+              }]
+            ]
+            return await editMessages(chatId, message_id, inline_keyboard, text)
+          }
 
 
           // console.log(command)
@@ -174,15 +206,14 @@ export const gameToObject = (list) => {
             }]]
             return await editMessages(chatId, message_id, inline_keyboard, text);
           }
-
-
         }
       }
 
       //меню игры на больше 1
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
-          const inline_keyboard = bigTeam(event.gameName, "AllGameList", `${event.callData}`, event.callData,)
+          await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
+          const inline_keyboard = bigTeam(event.gameName, "AllGameList", `${event.callData}`, event.callData, event.haveMix)
           return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
 
         }
@@ -228,7 +259,7 @@ export const gameToObject = (list) => {
           const regText = user ? "Изменить данные" : "Зарегистрироваться"
 
           const inline_keyboard = smallTeam(event.gameName, "AllGameList", regText, {
-             callData: event.callData,  ref: chatId,
+            callData: event.callData, ref: chatId,
           }, event.webAppUrl, event.callData)
 
           return await editMessages(chatId, message_id, inline_keyboard, event.descriptions, event.imageUrl)
@@ -267,7 +298,7 @@ export const gameToObject = (list) => {
 
       obj[event.callData] = {
         editRegistrationMenu: async (chatId, message_id) => {
-           await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
+          await DisciplineService.createOrGet(event.callData, event.gameName, event.type, event.dateEnd)
           const nick = await telegramUrlCheck(chatId)
           const inline_keyboard = mixTeam(event.gameName, "AllGameList", event.callData, nick)
           return await editMessages(chatId, message_id, inline_keyboard, texts.mixMenu, event.imageUrl)
@@ -315,8 +346,10 @@ export const gameToObject = (list) => {
                 url: `${event.webAppUrl}?${query}`
               }
             }],
-            [{text:"<<- Назад",
-              callback_data:   event.callData}]
+            [{
+              text: "<<- Назад",
+              callback_data: event.callData
+            }]
           ]
           return await editMessages(chatId, message_id, inline_keyboard, 'страница регистрации на турнир')
         }

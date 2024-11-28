@@ -2,25 +2,46 @@ import {texts} from "../text.js";
 
 export const gamesList = [
 
+
   {
-    gameName: "Counter-Strike 2 \"2x2\"",
-    dateStart: +(new Date(2024, 11 - 1, 1, 17 - 3, 25)),
-    dateEnd: +(new Date(2024, 11 - 1, 15, 23 - 3, 59)),
-    descriptions: "Регистрация на новый турнир по Counter-Strike 2 \"2x2\", Выбери как зарегистрироваться, " +
-      "как капитан команды или как член команды?",
-    registrationSheets: "cs_17_11_24",
-    imageUrl: "https://sun9-50.userapi.com/impg/iMq8QN6bufDab5J17SAutQN3uqm15W0d29pNeQ/AVYrwhpWUO4.jpg?size=1920x1080&quality=95&sign=c6485f43735ef269f9f9c2414c886316&type=album",
-    inAppimageUrl: "https://sun9-48.userapi.com/impg/XqCNP5HpA0mkQOq2c3mxBLzkz2oW3fy7rcrupg/RjMaqf4hVjc.jpg?size=1080x1920&quality=95&sign=b6e03cb44d4d27102cc065422d2bf3f0&type=album",
-    reglaments: "С Регламентом турнира по Counter-Strike 2 \"2x2\" можно ознакомится по данной ссылке: https://clck.ru/3ELvYb \n \n" + texts.capitanReg +
-      "\n \nДля подтверждения участия мы позвоним вашему капитану за 2-3 дня до кибер-турнира. Удачи на SkyNet GAMES!",
-    commandMemberCount: 2,
+    gameName: "Dota 2",
+    dateStart: +(new Date(2024, 11 - 1, 28, 17 - 3, )),
+    dateEnd: +(new Date(2024, 12 - 1, 13, 23 - 3, 55)),
+    descriptions: "Регистрация на новый турнир по Dota 2, вы можете зарегистрироваться как командой, так и в соло в режиме MiX",
+    registrationSheets: "dota_15_12_24_1",
+    imageUrl: "https://sun9-78.userapi.com/impg/bmQwcIv1RnHNSXkKN1xI7NBXjK9Ql1NdHSQUxg/9KZyy3gUJy8.jpg?size=1920x1080&quality=95&sign=732b961d5ab6de57736156f6e3e72050&type=album",
+    inAppimageUrl: "https://sun9-28.userapi.com/impg/cywL8fuFRvo14aaOlFQIF-z7TrKn30zQAvOsmw/KBMfKd-thmY.jpg?size=1080x1920&quality=96&sign=c2e8e863b94d0c5eb7d73b3950143f3d&type=album",
+    reglaments: "С Регламентом турнира по Dota 2 можно ознакомится по данной ссылке: https://clck.ru/3Et5gg",
+    commandMemberCount: 5,
     // webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
     webAppUrl: "https://skynetgamesbot.ru/game",
-    anoncedPost: "https://t.me/games_skynet/486",
-    anonced: "cs",
+    anoncedPost: "https://t.me/games_skynet/1",
+    anonced: "dota",
     type: "game",
-
+    haveMix: true,
+    specialFields: [
+      {
+        textType: "input",
+        placeholder: "Позиция",
+        name: "position",
+        title: "Позиция на которой вы хотите играть (№ от 1 до 5, можно указать несколько):",
+        minCheck: 1,
+        maxCheck: 5,
+        validator: "^[1-5]+$",
+        isBeDisable: false
+      }
+    ],
     fields: [
+      {
+        textType: "textarea",
+        placeholder: "Ваш MMR",
+        name: "rating",
+        title: "Ваш MMR:",
+        minCheck: 3,
+        maxCheck: 5,
+        validator: "^[0-9]+$",
+        isBeDisable: false
+      },
       {
         textType: "textarea",
         placeholder: "Название команды",
@@ -31,17 +52,6 @@ export const gamesList = [
         validator: "^[а-яА-Яa-zA-Z\\d \\s]+$",
         isBeDisable: true
       },
-      {
-        textType: "textarea",
-        placeholder: "Ваш рейтинг",
-        name: "rating",
-        title: "Ваш рейтинг в игре:",
-        minCheck: 3,
-        maxCheck: 10,
-        validator: "^[а-яА-Яa-zA-Z\\d \\s]+$",
-        isBeDisable: false
-      }
     ]
   },
-
 ]

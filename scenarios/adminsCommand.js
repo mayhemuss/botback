@@ -2,11 +2,21 @@ import {returnLogs} from "../services/returnLogs.js";
 import {bot} from "../index.js";
 import {savetoEXEL} from "../services/savetoEXEL.js";
 import {codeText} from "../functions/codeDecode.js";
+import {mixCommandCreator} from "../functions/mixCommandCreator.js";
+import {timeCheck} from "../functions/timeCheck.js";
+import {gamesList} from "../games/gamesList.js";
 
 export const adminsCommand = {
 
-  "/code":{
-    callBack: async(chatId, text)=>{
+  "/middle": {
+    callBack: async (chatId, text) => {
+      await mixCommandCreator(timeCheck(gamesList).filter(game => game.type === "mix")[0].callData)
+      return "done"
+    }
+  },
+
+  "/code": {
+    callBack: async (chatId, text) => {
       const decodet = text.split(" ")[1]
       const t = `реферальная ссылка: https://t.me/SkyNetGames_bot?start=${
         codeText(decodet)}`
@@ -15,8 +25,8 @@ export const adminsCommand = {
     }
   },
 
-  "/decode":{
-    callBack: async(chatId, text)=>{
+  "/decode": {
+    callBack: async (chatId, text) => {
 
     }
   },

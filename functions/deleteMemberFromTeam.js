@@ -26,6 +26,43 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
     messageToSave.deleteParams = params
 
     const disciplineId = await DisciplineService.createOrGet(callData, actualgame.gameName, actualgame.type, actualgame.dateEnd)
+
+    if (params.type === "mix" && params.conf === "false") {
+      // const memberInfo = deletedMember.username ? deletedMember.username : deletedMember.telegramName
+
+      const quer = {
+        id: +params.id,
+        conf: true,
+        type: "mix"
+      }
+
+      const inline_keyboard = [[
+        {
+          text: "✅ Подтвердить",
+          callback_data: `delete?${Object.keys(quer).map(elem => {
+            return `${elem}=${quer[elem]}`
+          }).join("&")}#${callData}`
+        },
+        {
+          text: "❌ Отменить",
+          callback_data: callData + "_comand"
+        }
+      ]]
+
+      //отправка кнопок подтверждения
+      return await editMessages(chatId, message_id, inline_keyboard, `Подтвердить удаление регистрации с MiX режима`)
+    }
+
+
+    if (params.type === "mix" && params.conf === "true") {
+      console.log("mixdeletetrue")
+      await UserRegService.deleteUserReg(disciplineId, params.id)
+      await gameObj[callData].editRegistrationMenu(chatId, message_id)
+      await bot.sendMessage(chatId, "Вы удалили регистрацию с MiX режима и можете зарегистрироваться либо как член команды, либо как капитан")
+      return await saveMessages(JSON.stringify({...messageToSave, answer: `удалился с микс режима`}))
+    }
+
+
     const currentComand = await UserRegService.getCommand(disciplineId, chatId)
     if (currentComand.length === 0) {
       return
@@ -41,12 +78,8 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
     if (params.conf === "true") {
 
 
-
-
       //если инициатор капитан
       if (initiator.registrationType === "capitan") {
-
-
 
 
         //если удаляет себя
@@ -82,7 +115,6 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
     } else {
 
 
-
       // если пытается удалить капитана и команду
       if (+params.id === +chatId) {
 
@@ -99,7 +131,7 @@ export const deleteMemberFromTeam = async (callBackData, gameObj, chatId, messag
         return +params.id === +member.chatId
       })[0]
 
-            const memberInfo = deletedMember.username ? deletedMember.username : deletedMember.telegramName
+      const memberInfo = deletedMember.username ? deletedMember.username : deletedMember.telegramName
 
       const quer = {
         id: +params.id,

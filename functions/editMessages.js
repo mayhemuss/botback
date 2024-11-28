@@ -11,7 +11,8 @@ export const editMessages = async (chatId, message_id, inline_keyboard, text, ph
     message_id,
     reply_markup: {
       inline_keyboard
-    }
+    },
+    parse_mode: 'Markdown',
   }
 
   if (photo) {

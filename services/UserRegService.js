@@ -47,9 +47,11 @@ class UserRegService {
 
   async getAll() {
     return await UserReg.findAll()
-
   }
 
+  async getDiscipline(disciplineId) {
+    return await UserReg.findAll({where: {disciplineId}})
+  }
 
 }
 

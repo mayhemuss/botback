@@ -20,7 +20,8 @@ const variants = [
   '/tables',
   "/admin",
   "/code",
-  "/decode"
+  "/decode",
+  "/middle"
 ]
 
 export const adminsCommandCheck = (text) => {

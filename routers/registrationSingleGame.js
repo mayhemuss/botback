@@ -15,5 +15,5 @@ export const registrationSingleGame = async (chatId, user, disciplineId, ipData,
     await bot.sendMessage(chatId, `Спасибо за изменение данных, ${name}`)
     messageToSave.answer = `Спасибо за изменение данных, ${name}`
   }
-  await saveMessages(messageToSave, chatId, "bot")
+  await saveMessages(JSON.stringify(messageToSave), chatId, "bot")
 }
