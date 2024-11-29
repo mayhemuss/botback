@@ -17,18 +17,18 @@ export const refLotteryHandler = async (chatId, ref, game, command, messageToSav
   messageToSave.count = count
 
   //уже все рефералы набраны
-  if (count >= commandMemberCount) {
+  if (count >= commandMemberCount + 8) {
     await bot.sendMessage(chatId, texts.lotteryTeamFull)
     messageToSave.answer = `рефералы ${ref} уже найдены`
 
     //рефералы еще не набраны
   } else {
-
+const users = userids.map(user=>user.id)
     //человек уже был подписан
-    if (userids.includes(chatId)) {
+    if (users.includes(chatId)) {
 
       await bot.sendMessage(chatId, texts.loteryMemberInList)
-      messageToSave.answer =texts.loteryMemberInList
+      messageToSave.answer = texts.loteryMemberInList
 
       //человек не был подписан
     } else {
@@ -38,7 +38,7 @@ export const refLotteryHandler = async (chatId, ref, game, command, messageToSav
 
       await bot.sendPhoto(chatId, imageUrl)
       await bot.sendMessage(chatId, text, form)
-      messageToSave.answer =text
+      messageToSave.answer = text
 
     }
   }

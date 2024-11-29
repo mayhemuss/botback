@@ -2,10 +2,44 @@ import {texts} from "../text.js";
 
 export const gamesList = [
 
+  {
+    gameName: "Новогодний Розыгрыш",
+    dateStart: +(new Date(2024, 11, 29, 17 - 3,)),
+    dateEnd: +(new Date(2024, 12 - 1, 9, 23 - 3,59)),
+    descriptions: 'Новогодний розыгрыш от SkyNet GAMES, совместно с Mobile Legends: Bang Bang & Realme. \n' +
+      'Получай реферальную ссылку, приглашай друзей в телеграмм канал SkyNet GAMES и получи возможность выиграть ценных призов, более чем на 100.000 рублей!   \n' +
+      ' \n' +
+      'Важно:  \n' +
+      'Ты должен проживать в Санкт-Петербурге и быть подписан на телеграмм каналы: \n' +
+      '[SkyNet GAMES](https://t.me/games_skynet)\n' +
+      '[Mobile Legends: Bang Bang](https://t.me/mlbbcis) \n' +
+      '[Realme](https://t.me/realmerussia)\n' +
+      '\n' +
+      'Твои приглашенные друзья должны быть подписаны на SkyNet GAMES.\n' +
+      ' \n' +
+      'Обязательно, на момент подведения итогов розыгрыша 25.12, должна быть открыта фотография аккаунта Telegram у тебя и твоих приглашенных друзей!  \n' +
+      'Запрещено приглашать родителей и родственников.  \n' +
+      'Минимальное количество приглашений - 2 человека.  \n' +
+      'Не забудь отключить VPN перед регистрацией. \n' +
+      'Участники, нарушившие правила, автоматически будут дисквалифицированы.',
+    registrationSheets: "сделали_ссылку_айфон30_09_24",
+    lotterySheets: "участники_розыгрыша_айфон30_09_24",
+    imageUrl: "https://sun9-17.userapi.com/impg/Ge0XhYBBbubdkrsRBbW0fo9nasKrLTytv-uVqA/5_i7xc6FszQ.jpg?size=1920x1080&quality=95&sign=745aea759a58f98e358f9ebb224307df&type=album",
+    inAppimageUrl: "https://sun9-74.userapi.com/impg/By1HTs_ny4QCEzwZ_fmakErlIHFmH26QK4K_Lw/HWaAolF_ofw.jpg?size=1080x1920&quality=95&sign=9192b55164becf32e0d84b2f1cc34e3a&type=album",
+    // reglaments: `Гога тут щас напишет невьебаться какой текст с регламентом конкурса на айфоны`,
+    commandMemberCount: 2,
 
+
+    webAppUrl: "https://skynetgamesbot.ru/game",
+    // webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
+    anonced: "newYLottery",
+    anoncedPost: "https://t.me/games_skynet/",
+    type: "lottery",
+    fields: []
+  },
   {
     gameName: "Dota 2",
-    dateStart: +(new Date(2024, 11 - 1, 28, 17 - 3, )),
+    dateStart: +(new Date(2024, 11 - 1, 28, 17 - 3,)),
     dateEnd: +(new Date(2024, 12 - 1, 13, 23 - 3, 55)),
     descriptions: "Регистрация на новый турнир по Dota 2, вы можете зарегистрироваться как командой, так и в соло в режиме MiX",
     registrationSheets: "dota_15_12_24_1",
