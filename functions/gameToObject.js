@@ -53,8 +53,8 @@ export const gameToObject = (list) => {
 
         const text = "Если у вас возникли проблемы с входом в мини приложение с регистрацией, " +
           "то скорей всего они связаны с отключенными скриптами в приложении Telegram. Поробуйте " +
-          "открыть бота через WEB версию телеграм: https://web.telegram.org/\n\n" +
-          "Если это не помогло напишите нам в техническую поддержку: https://t.me/Sitnikov_vla"
+          "открыть бота через [WEB версию телеграм](https://web.telegram.org/)\n\n" +
+          "Если это не помогло напишите нам в [техническую поддержку](https://t.me/Sitnikov_vla)"
 
         return await editMessages(chatId, message_id, inline_keyboard, text)
       }
