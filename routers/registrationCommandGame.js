@@ -43,7 +43,7 @@ export const registrationCommandGame = async (chatId, user, disciplineId, ipData
       })
 
       //команда не полна
-      if (command.length < commandMemberCount) {
+      if (command.length < commandMemberCount + 2) {
         const newReg = await UserController
           .CreateOrUpdate(user, disciplineId, ipData, ref, body)
 
