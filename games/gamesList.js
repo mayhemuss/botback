@@ -1,11 +1,12 @@
-import {texts} from "../text.js";
+
+import {FRONT_URL} from "../tokens/url.js";
 
 export const gamesList = [
 
   {
-    gameName: "Новогодний Розыгрыш",
-    dateStart: +(new Date(2024, 11, 29, 17 - 3,)),
-    dateEnd: +(new Date(2024, 12 - 1, 9, 23 - 3,59)),
+    gameName: "Новогодний Розыгрыш MLBB",
+    dateStart: +(new Date(2024, 11 - 1, 29, 17 - 3,)),
+    dateEnd: +(new Date(2024, 12 - 1, 9, 23 - 3, 59)),
     descriptions: 'Новогодний розыгрыш от SkyNet GAMES, совместно с Mobile Legends: Bang Bang & Realme. \n' +
       'Получай реферальную ссылку, приглашай друзей в телеграмм канал SkyNet GAMES и получи возможность выиграть ценных призов, более чем на 100.000 рублей!   \n' +
       ' \n' +
@@ -26,19 +27,17 @@ export const gamesList = [
     lotterySheets: "участники_розыгрыша_айфон30_09_24",
     imageUrl: "https://sun9-17.userapi.com/impg/Ge0XhYBBbubdkrsRBbW0fo9nasKrLTytv-uVqA/5_i7xc6FszQ.jpg?size=1920x1080&quality=95&sign=745aea759a58f98e358f9ebb224307df&type=album",
     inAppimageUrl: "https://sun9-74.userapi.com/impg/By1HTs_ny4QCEzwZ_fmakErlIHFmH26QK4K_Lw/HWaAolF_ofw.jpg?size=1080x1920&quality=95&sign=9192b55164becf32e0d84b2f1cc34e3a&type=album",
-    // reglaments: `Гога тут щас напишет невьебаться какой текст с регламентом конкурса на айфоны`,
+
     commandMemberCount: 2,
 
-
-    webAppUrl: "https://skynetgamesbot.ru/game",
-    // webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
+    webAppUrl: `${FRONT_URL}/game`,
     anonced: "newYLottery",
     anoncedPost: "https://t.me/games_skynet/",
     type: "lottery",
     fields: []
   },
   {
-    gameName: "Dota 2",
+    gameName: "Saint-P Champ SkyNet GAMES",
     dateStart: +(new Date(2024, 11 - 1, 28, 17 - 3,)),
     dateEnd: +(new Date(2024, 12 - 1, 13, 23 - 3, 55)),
     descriptions: "Регистрация на новый турнир по Dota 2, вы можете зарегистрироваться как командой, так и в соло в режиме MiX",
@@ -47,8 +46,7 @@ export const gamesList = [
     inAppimageUrl: "https://sun9-28.userapi.com/impg/cywL8fuFRvo14aaOlFQIF-z7TrKn30zQAvOsmw/KBMfKd-thmY.jpg?size=1080x1920&quality=96&sign=c2e8e863b94d0c5eb7d73b3950143f3d&type=album",
     reglaments: "С Регламентом турнира по Dota 2 можно ознакомится по данной ссылке: https://clck.ru/3Et5gg",
     commandMemberCount: 5,
-    // webAppUrl: "https://frontdev.mayhemus.keenetic.pro/game",
-    webAppUrl: "https://skynetgamesbot.ru/game",
+    webAppUrl: `${FRONT_URL}/game`,
     anoncedPost: "https://t.me/games_skynet/1",
     anonced: "dota",
     type: "game",

@@ -2,10 +2,10 @@ import {saveMessages} from "../services/saveMessages.js";
 import {bot} from "../index.js";
 import UserController from "../UserController.js";
 import {texts} from "../text.js";
-import {userids} from "../userids.js";
+import {userids} from "../tokens/userids.js";
 import UserRegService from "../services/UserRegService.js";
 
-const regions = ["Санкт-Петербург", "Ленинградская область", "St Petersburg", "Leningradskaya", "SPE"]
+const regions = ["Санкт-Петербург", "Ленинградская область", "St Petersburg", "Leningradskaya", "SPE", "Выборг"]
 
 export const registrationLottery = async (chatId, user, disciplineId, ipData, ref, body, game, ip) => {
   const {city, region,} = ipData
@@ -20,8 +20,8 @@ export const registrationLottery = async (chatId, user, disciplineId, ipData, re
       const newReg = await UserController
         .CreateOrUpdate(user, disciplineId, ipData, ref, body)
       if (newReg) {
-        await bot.sendMessage(chatId, texts.loteryRegDone(name))
-        await bot.sendMessage(chatId, texts.loteryRefUrl(chatId, callData))
+        await bot.sendMessage(chatId, texts.loteryRegDone(name), {parse_mode: 'Markdown'})
+        await bot.sendMessage(chatId, texts.loteryRefUrl(chatId, callData), {parse_mode: 'Markdown'})
         messageToSave.answer = texts.loteryRefUrl(chatId, callData)
       } else {
         await bot.sendMessage(chatId, `Спасибо за изменение данных, ${name}`)
@@ -37,8 +37,8 @@ export const registrationLottery = async (chatId, user, disciplineId, ipData, re
           .CreateOrUpdate(user, disciplineId, ipData, chatId, body)
         if (newReg) {
           await bot.sendMessage(chatId, texts.loteryMemberInList)
-          await bot.sendMessage(chatId, texts.loteryRegDone(name))
-          await bot.sendMessage(chatId, texts.loteryRefUrl(chatId, callData))
+          await bot.sendMessage(chatId, texts.loteryRegDone(name), {parse_mode: 'Markdown'})
+          await bot.sendMessage(chatId, texts.loteryRefUrl(chatId, callData), {parse_mode: 'Markdown'})
           messageToSave.answer = texts.loteryRefUrl(chatId, callData)
           messageToSave.loteryMemberInList = texts.loteryMemberInList
         } else {
@@ -100,5 +100,5 @@ export const registrationLottery = async (chatId, user, disciplineId, ipData, re
     await bot.sendMessage(chatId, texts.regionNotAlloved)
     messageToSave.answer = texts.regionNotAlloved
   }
-  await saveMessages(messageToSave, chatId, "bot")
+  await saveMessages(JSON.stringify(messageToSave), chatId, "bot")
 }

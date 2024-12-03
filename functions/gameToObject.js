@@ -130,7 +130,7 @@ export const gameToObject = (list) => {
               text: "<<- Назад", callback_data: event.callData + "_capitan"
             }]]
             return await editMessages(chatId, message_id, inline_keyboard, `В команду ${commandName}  зарегистрировалось ${count} членов команды, \n` + members.map((member, index) => {
-              const memberInfo = member.userName ? member.userName : member.telegramName
+              const memberInfo = member.userName ? `[${member.telegramName}](${member.userName})` : member.telegramName
               return `${index + 1}. ${memberInfo} ${member.registrationType === "capitan" ? "- Капитан" : "- член команды"}`
             }).join("\n"))
           } else {

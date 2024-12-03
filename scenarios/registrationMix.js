@@ -14,5 +14,5 @@ export const registrationMix = async (chatId, user, disciplineId, ipData, ref, b
     await bot.sendMessage(chatId, `Спасибо за изменение данных, ${name}`)
     messageToSave.answer = `Спасибо за изменение данных, ${name}`
   }
-  await saveMessages(messageToSave, chatId, "bot")
+  await saveMessages(JSON.stringify(messageToSave), chatId, "bot")
 }

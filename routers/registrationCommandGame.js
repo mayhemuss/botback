@@ -112,5 +112,5 @@ export const registrationCommandGame = async (chatId, user, disciplineId, ipData
       messageToSave.answer = `Спасибо за изменение данных, ${name}`
     }
   }
-  await saveMessages(messageToSave, chatId, "bot")
+  await saveMessages(JSON.stringify(messageToSave), chatId, "bot")
 }
