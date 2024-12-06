@@ -24,8 +24,9 @@ export const registrationLottery = async (chatId, user, disciplineId, ipData, re
         await bot.sendMessage(chatId, texts.loteryRefUrl(chatId, callData), {parse_mode: 'Markdown'})
         messageToSave.answer = texts.loteryRefUrl(chatId, callData)
       } else {
-        await bot.sendMessage(chatId, `Спасибо за изменение данных, ${name}`)
-        messageToSave.answer = `Спасибо за изменение данных, ${name}`
+        await bot.sendMessage(chatId, texts.loteryRegDone(name), {parse_mode: 'Markdown'})
+        await bot.sendMessage(chatId, texts.loteryRefUrl(chatId, callData), {parse_mode: 'Markdown'})
+        messageToSave.answer = texts.loteryRefUrl(chatId, callData)
       }
 
       //регистрация подпиваса

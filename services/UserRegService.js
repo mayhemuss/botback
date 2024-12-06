@@ -23,9 +23,14 @@ class UserRegService {
   }
 
   async editUser(disciplineId, body, ipData, user) {
-    const {phone, name, rating, steamName, username} = body
+    const {phone, name, rating, steamName, username, ip} = body
     const Tusername = username ? "https://t.me/" + username : ""
-    await UserReg.update({phone, name, rating, steamName, Tusername, ...ipData}, {where: {id: user.id, disciplineId}})
+    await UserReg.update({phone, name, rating, steamName, Tusername, ...ipData, ip}, {
+      where: {
+        id: user.id,
+        disciplineId
+      }
+    })
   }
 
   async editLOtteryRegDone(chatId, disciplineId) {
