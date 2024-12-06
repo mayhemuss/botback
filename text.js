@@ -252,7 +252,7 @@ export const mixTeam = (gameName, prevMenu, callData, nick) => {
 export const lottery = async (gameName, prevMenu, callData, webAppUrl, rawQuery, chatId) => {
   const disciplineId = await DisciplineService.createOrGet(callData, gameName, "lottery", callData.split("_")[1])
   const user = await UserRegService.getUser(disciplineId, chatId)
-  const regText = user ? "Изменить данные" : `Получить реферальную ссылку`
+  const regText = user ? "Получить реферальную ссылку" : `Получить реферальную ссылку`
   const query = rawQueryToString(rawQuery)
 
   return [
