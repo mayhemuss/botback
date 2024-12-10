@@ -6,8 +6,8 @@ import {texts} from "../text.js";
 
 export const gameToObjectAdmin = async (list) => {
   const actualList = gamesList.map(game => {
-    const {anonced, dateEnd} = game
-    const callData = anonced + "_" + dateEnd
+    const {anonced, dateEnd, callData: callInGame} = game
+    const callData = callInGame ? callInGame : anonced + "_" + dateEnd
     return {...game, callData}
   })
   const obj = {

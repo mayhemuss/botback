@@ -5,7 +5,7 @@ export const timeCheck = (list) => {
   }).map(event => {
     return {
       ...event,
-      callData: event.anonced +"_"+ event.dateEnd
+      callData: event.callData ? event.callData : event.anonced + "_" + event.dateEnd
     }
   })
 }

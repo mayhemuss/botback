@@ -14,7 +14,7 @@ export const savetoEXEL = async (chatId = ADMIN_ID) => {
 
   for (let game of gamesList) {
 
-    const callData = game.anonced + "_" + game.dateEnd
+    const callData = game.callData ? game.callData : game.anonced + "_" + game.dateEnd
     const {registrationSheets, lotterySheets, type} = game
     const disciplineId = games.filter(dis => {
 

@@ -6,7 +6,8 @@ export const gamesList = [
   {
     gameName: "Новогодний Розыгрыш MLBB",
     dateStart: +(new Date(2024, 11 - 1, 29, 17 - 3,)),
-    dateEnd: +(new Date(2024, 12 - 1, 9, 23 - 3, 59)),
+    dateEnd: +(new Date(2025, 1 - 1, 9, 23 - 3, 59)),
+    callData:"newYLottery_1733777940000",
     descriptions: 'Новогодний розыгрыш от SkyNet GAMES, совместно с Mobile Legends: Bang Bang & Realme. \n' +
       'Получай реферальную ссылку, приглашай друзей в телеграмм канал SkyNet GAMES и получи возможность выиграть ценных призов, более чем на 100.000 рублей!   \n' +
       ' \n' +
