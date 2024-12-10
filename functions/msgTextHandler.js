@@ -54,7 +54,7 @@ export const msgTextHandler = async (msg) => {
     await bot.sendMessage(chatId, texts.allBad)
     await bot.sendMessage(ADMIN_ID,
       JSON.stringify(error) + ` что то пошло не так у ${chatId}`)
-    await saveMessages(JSON.stringify(error), chatId, "bot")
+    await saveMessages(JSON.stringify({messageToSave, error}), chatId, "bot")
   }
 }
 

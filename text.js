@@ -129,7 +129,7 @@ export const forms = {
       reply_markup: {
         inline_keyboard: [
           [{
-            text: "Зарегистрировать своего друга участником",
+            text: "Зарегистрироваться членом команды",
             web_app: {
               url: `${webAppUrl}?${query}`
             }

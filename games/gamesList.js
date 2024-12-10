@@ -1,4 +1,3 @@
-
 import {FRONT_URL} from "../tokens/url.js";
 
 export const gamesList = [
@@ -7,7 +6,7 @@ export const gamesList = [
     gameName: "Новогодний Розыгрыш MLBB",
     dateStart: +(new Date(2024, 11 - 1, 29, 17 - 3,)),
     dateEnd: +(new Date(2025, 1 - 1, 9, 23 - 3, 59)),
-    callData:"newYLottery_1733777940000",
+    callData: "newYLottery_1733777940000",
     descriptions: 'Новогодний розыгрыш от SkyNet GAMES, совместно с Mobile Legends: Bang Bang & Realme. \n' +
       'Получай реферальную ссылку, приглашай друзей в телеграмм канал SkyNet GAMES и получи возможность выиграть ценных призов, более чем на 100.000 рублей!   \n' +
       ' \n' +
@@ -41,6 +40,7 @@ export const gamesList = [
     gameName: "Saint-P Champ SkyNet GAMES",
     dateStart: +(new Date(2024, 11 - 1, 28, 17 - 3,)),
     dateEnd: +(new Date(2024, 12 - 1, 13, 23 - 3, 55)),
+    callData: "dota_1734123300000",
     descriptions: "Регистрация на новый турнир по Dota 2, вы можете зарегистрироваться как командой, так и в соло в режиме MiX",
     registrationSheets: "dota_15_12_24_1",
     imageUrl: "https://sun9-78.userapi.com/impg/bmQwcIv1RnHNSXkKN1xI7NBXjK9Ql1NdHSQUxg/9KZyy3gUJy8.jpg?size=1920x1080&quality=95&sign=732b961d5ab6de57736156f6e3e72050&type=album",
