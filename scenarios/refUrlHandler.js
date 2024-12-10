@@ -76,6 +76,12 @@ export const refUrlHandler = async (chatId, text, messageToSave) => {
     const command = await UserRegService.getCommand(disciplineId, capId)
 
     if (type === "game") {
+      const user = await UserRegService.getUser(disciplineId, chatId)
+      if(user.ref===chatId){
+        await bot.sendMessage(chatId, `Вы уже являетесь капитаном команды, поэтому не можете вступить в другую команду`)
+        messageToSave.answer = `Вы уже являетесь капитаном команды, поэтому не можете вступить в другую команду`
+        return await saveMessages(JSON.stringify(messageToSave), chatId)
+      }
       return await refGameHandler(chatId, capId, game, command, messageToSave)
     }
     if (type === "lottery") {
