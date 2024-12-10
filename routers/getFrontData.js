@@ -7,6 +7,7 @@ import {saveMessages} from "../services/saveMessages.js";
 export const getFrontData = async (req, res) => {
 
   const messageToSave = {nginxIp: req.ip}
+  console.log(req)
   try {
     const {ref, callData, chatId} = req.body;
 
@@ -34,6 +35,7 @@ export const getFrontData = async (req, res) => {
     } else if (game.type === "lottery") {
       result.regText = user ? "Изменить данные" : "Получить реферальную ссылку"
     }
+    result.Data = game.dateEnd
     result.inAppimageUrl = game.inAppimageUrl
     result.commandMemberCount = commandMemberCount
     // const fields = game.fields
