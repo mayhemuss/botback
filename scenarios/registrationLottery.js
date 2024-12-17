@@ -5,15 +5,34 @@ import {texts} from "../text.js";
 import {userids} from "../tokens/userids.js";
 import UserRegService from "../services/UserRegService.js";
 
-const regions = ["Санкт-Петербург", "Ленинградская область", "St Petersburg", "Leningradskaya", "SPE", "Выборг"]
+const regions = [
+  "Санкт-Петербург",
+  "Ленинградская область",
+  "St Petersburg",
+  "Leningradskaya",
+  "SPE",
+  "Выборг",
+  "Приозерск",
+  "Кингисепп",
+  "Тосно",
+  "Сертолово",
+  "Зеленогорск",
+  "Ленинградская"
+]
 
 export const registrationLottery = async (chatId, user, disciplineId, ipData, ref, body, game, ip) => {
-  const {city, region,} = ipData
+  const regi = ipData.map(one => {
+    const {city, region,} = one
+    return [city, region];
+  }).flat()
+
+  console.log(regi)
+  // const {city, region,} = ipData
   const {name} = body
   const {callData, commandMemberCount} = game
   const messageToSave = {body, ip, ipData};
 
-  if (regions.includes(region) || regions.includes(city)) {
+  if (regions.some(one => regi.includes(one))) {
 
     //первичная рега кэпа подпивасов
     if (ref === chatId) {
