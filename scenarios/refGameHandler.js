@@ -26,7 +26,7 @@ export const refGameHandler = async (chatId, ref, game, command, messageToSave) 
 
     const commandIds = command.map(member => +member.chatId)
 
-    if (count >= commandMemberCount && !commandIds.includes(chatId)) {
+    if (count >= commandMemberCount + 2 && !commandIds.includes(chatId)) {
 
       await bot.sendMessage(chatId, `Команды ${commandName} уже набрана`)
 

@@ -51,6 +51,7 @@ export const refUrlHandler = async (chatId, text, messageToSave) => {
   const game = games[0]
   const {type, gameName} = game
 
+  //mix
   if (+capId === -1) {
     await bot.sendMessage(chatId,
       "Вы уже были зарегистрированы в режиме MiX, что бы зарегистрироваться " +
