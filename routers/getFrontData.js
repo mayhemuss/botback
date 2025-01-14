@@ -6,8 +6,8 @@ import {saveMessages} from "../services/saveMessages.js";
 
 export const getFrontData = async (req, res) => {
 
-  const messageToSave = {nginxIp: req.ip}
-  console.log(req)
+  const messageToSave = {}
+  console.log(req.body)
   try {
     const {ref, callData, chatId} = req.body;
 
