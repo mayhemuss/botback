@@ -1,10 +1,10 @@
-import {BOT_NAME} from "./tokens/url.js";
+import {BOT_NAME,FRONT_URL} from "./tokens/url.js";
 import {rawQueryToString} from "./functions/rawQueryToString.js";
 import {codeText} from "./functions/codeDecode.js";
 import DisciplineService from "./services/DisciplineService.js";
 import UserRegService from "./services/UserRegService.js";
 
-export const sky_logo = "https://sun9-36.userapi.com/impg/5wsa0laxsuOBStXoQTHxvyy1WXL1x9XWQgguhg/fpeANuWJtRc.jpg?size=1920x1080&quality=95&sign=484509bab898750662d9f9e780afc5b5&type=album"
+export const sky_logo = `${FRONT_URL}/api/static/sky_logo.jpg`
 
 const memberCountWord = {
   "1": "оставшегося одного члена",
