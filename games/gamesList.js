@@ -3,7 +3,7 @@ import {FRONT_URL} from "../tokens/url.js";
 export const gamesList = [
   {
     gameName: "Valorant",
-    dateStart: +(new Date(2025, 2 - 1, 18, 15 - 3,55)),
+    dateStart: +(new Date(2025, 2 - 1, 24, 17 - 3)),
     dateEnd: +(new Date(2025, 3 - 1, 13, 23 - 3, 55)),
     descriptions: "Регистрация на новый турнир по Valorant, вы можете зарегистрироваться как командой, так и в соло в режиме MiX",
     registrationSheets: "valorant_23_03_25",
